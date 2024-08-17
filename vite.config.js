@@ -15,7 +15,7 @@ function addHeaders(server) {
 
 export default defineConfig({
     build: {
-        target: [ 'es2020', 'chrome67', 'firefox68' ]
+        target: [ 'es2020', 'chrome87', 'firefox78' ]
     },
     output: {
         inlineDynamicImports: true

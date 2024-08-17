@@ -1,0 +1,16 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name {{ server_name }} www.{{ server_name }};
+
+    root {{ document_root }};
+
+    index index.html;
+
+    location / {
+        # Get default MIME types
+        include /etc/nginx/mime.types;
+        try_files $uri $uri/ =404;
+    }
+}
