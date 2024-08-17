@@ -3,7 +3,6 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 
-import { basicSetup } from 'codemirror';
 import VueCodemirror from 'vue-codemirror';
 
 // import Prism from 'prismjs';
@@ -15,9 +14,9 @@ import VueCodemirror from 'vue-codemirror';
 // Prism.plugins.customClass.map({ number: "prism-number", tag: "prism-tag" });
 
 const app = createApp(App);
-// app.use(VueCodemirror, {
-//     // Set global Codemirror extension default list to empty
-//     // Otherwise we always get basic-setup extensions and cannot turn them off in components
-//     extensions: []
-// });
+app.use(VueCodemirror, {
+    // Set global Codemirror extension default list to empty
+    // Otherwise we always get basic-setup extensions and cannot turn them off in components
+    extensions: []
+});
 app.mount('#app');
