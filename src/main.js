@@ -3,6 +3,9 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 
+import { basicSetup } from 'codemirror';
+import VueCodemirror from 'vue-codemirror';
+
 // import Prism from 'prismjs';
 // import 'prismjs/components/prism-python.js';
 // import 'prismjs/plugins/custom-class/prism-custom-class';
