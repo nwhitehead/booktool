@@ -12,7 +12,8 @@
                 v-model="localModelValue"
                 :indent-with-tab="true"
                 :tab-size="4"
-                :extensions="[markdownLanguage, consoleLightExtension]"
+                :allow-multiple-selections="true"
+                :extensions="[minimalSetup, bracketMatching(), markdownLanguage, consoleLightExtension, lineNumbers(), highlightActiveLine(), highlightActiveLineGutter(), drawSelection(), rectangularSelection()]"
                 :disabled="false"
                 @update:modelValue="newValue => { localModelValue = newValue; $emit('update:modelValue', newValue); }"
                 @ready="handleReady"
@@ -25,8 +26,9 @@
 
 import { ref } from 'vue';
 import { Codemirror } from 'vue-codemirror';
-import { EditorView } from '@codemirror/view';
-import { oneDark } from '@codemirror/theme-one-dark';
+import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection } from '@codemirror/view';
+import { minimalSetup  } from 'codemirror';
+import { bracketMatching } from '@codemirror/language';
 import { markdownLanguage } from '@codemirror/lang-markdown';
 import { consoleLightExtension } from './codemirrorLightTheme.js';
 
@@ -52,6 +54,7 @@ let localModelValue = ref(`
 # Main Title
 
 Some text is here. You can also put [links](http://www.example.com/) to URLs and things.
+What is (this) magic?
 
 ## Section title
 
