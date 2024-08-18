@@ -12,25 +12,29 @@
                 v-model="localModelValue"
                 :indent-with-tab="true"
                 :tab-size="4"
-                :allow-multiple-selections="true"
-                :extensions="[minimalSetup, bracketMatching(), markdownLanguage, consoleLightExtension, lineNumbers(), highlightActiveLine(), highlightActiveLineGutter(), drawSelection(), rectangularSelection()]"
+                :extensions="[minimalSetup, bracketMatching(), markdownLanguage, consoleLightExtension, lineNumbers(), highlightActiveLine(), highlightActiveLineGutter(), EditorState.allowMultipleSelections.of(true), drawSelection(), rectangularSelection(), crosshairCursor()]"
                 :disabled="false"
                 @update:modelValue="newValue => { localModelValue = newValue; $emit('update:modelValue', newValue); }"
                 @ready="handleReady"
             />
         </div>
+        <div v-html="DOMPurify.sanitize(md.render(localModelValue || ''))"></div>
     </section>
 </template>
 
 <script setup>
 
-import { ref } from 'vue';
+import { ref, shallowRef, watch } from 'vue';
 import { Codemirror } from 'vue-codemirror';
-import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection } from '@codemirror/view';
+import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor } from '@codemirror/view';
+import { EditorState } from '@codemirror/state';
 import { minimalSetup  } from 'codemirror';
 import { bracketMatching } from '@codemirror/language';
 import { markdownLanguage } from '@codemirror/lang-markdown';
 import { consoleLightExtension } from './codemirrorLightTheme.js';
+import markdownit from 'markdown-it';
+import DOMPurify from 'dompurify';
+import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
 
 const Theme = EditorView.theme({
     "&": {
@@ -50,7 +54,20 @@ const Theme = EditorView.theme({
     }
 });
 
-let localModelValue = ref(`
+const md = markdownit({
+    html: true,
+    breaks: false,
+    linkify: true,
+    quotes: '“”‘’',
+
+}).use(frontmatterPlugin, {});
+
+const view = shallowRef();
+
+let localModelValue = ref(`---
+title: Hello
+---
+
 # Main Title
 
 Some text is here. You can also put [links](http://www.example.com/) to URLs and things.
@@ -60,10 +77,15 @@ What is (this) magic?
 
 Hopefully this text is looking legible and easy to edit.
 
+~~http://www.example.com~~
 `);
 
-function handleReady(event) {
-    console.log('CodeMirror is ready.');
+watch(localModelValue, (newValue, oldValue) => {
+
+});
+
+function handleReady(payload) {
+    view.value = payload.view;
 }
 
 </script>
