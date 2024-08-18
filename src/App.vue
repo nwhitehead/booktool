@@ -12,7 +12,7 @@
                 v-model="localModelValue"
                 :indent-with-tab="true"
                 :tab-size="4"
-                :extensions="[]"
+                :extensions="[markdownLanguage, oneDark]"
                 :disabled="false"
                 @update:modelValue="newValue => { localModelValue = newValue; $emit('update:modelValue', newValue); }"
                 @ready="handleReady"
@@ -25,6 +25,8 @@
 
 import { ref } from 'vue';
 import { Codemirror } from 'vue-codemirror';
+import { oneDark } from '@codemirror/theme-one-dark';
+import { markdownLanguage } from '@codemirror/lang-markdown';
 
 let localModelValue = ref('put stuff here');
 
