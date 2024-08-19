@@ -35,6 +35,7 @@ import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
 import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
+import basicExample from '../test/basic.md?raw';
 
 function renderMarkdown(source) {
     let env = {};
@@ -71,21 +72,7 @@ const md = markdownit({
 
 const view = shallowRef();
 
-let localModelValue = ref(`---
-title: Hello
----
-
-# Main Title
-
-Some text is here. You can also put [links](http://www.example.com/) to URLs and things.
-What is (this) magic?
-
-## Section title
-
-Hopefully this text is looking legible and easy to edit.
-
-~~http://www.example.com~~
-`);
+let localModelValue = ref(basicExample);
 
 watch(localModelValue, (newValue, oldValue) => {
 
