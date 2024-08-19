@@ -18,7 +18,7 @@
                 @ready="handleReady"
             />
         </div>
-        <div v-html="DOMPurify.sanitize(md.render(localModelValue || ''))"></div>
+        <div v-html="renderMarkdown(localModelValue)"></div>
     </section>
 </template>
 
@@ -35,6 +35,13 @@ import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
 import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
+
+function renderMarkdown(source) {
+    let env = {};
+    const result = DOMPurify.sanitize(md.render(source || '', env));
+    console.log(env.frontmatter);
+    return `<pre>${JSON.stringify(env.frontmatter)}</pre>${result}`;
+}
 
 const Theme = EditorView.theme({
     "&": {
