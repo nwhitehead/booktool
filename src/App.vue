@@ -53,7 +53,7 @@ function renderMarkdown(source) {
     let env = {};
     const result = DOMPurify.sanitize(md.render(source || '', env));
     console.log(env.frontmatter);
-    return `<pre>${JSON.stringify(env.frontmatter)}</pre>${result}`;
+    return `<pre class="surface-100">${JSON.stringify(env.frontmatter, null, 4)}</pre>${result}`;
 }
 
 const Theme = EditorView.theme({
