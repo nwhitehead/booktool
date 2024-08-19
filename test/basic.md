@@ -1,5 +1,17 @@
 ---
-title: Hello
+# This is the frontmatter inside the --- fenced block.
+# Format is YAML keyword style. Keywords indicate document
+# metadata for PDF and EPUB generation.
+title: Test Document
+subtitle: Demonstration of many features of Nathan's Book Tool
+date: 2024-08-19
+authors:
+    - name: Nathan Whitehead
+      affiliations: 
+        - Shimmer Math Labs
+pagesize: 6x9
+theme: basic
+typeface: 100%
 ---
 
 # Main Title

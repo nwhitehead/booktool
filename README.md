@@ -24,6 +24,8 @@ Idea is you write your book in Markdown, the app converts it to PDF.
 [ ] Support: mark
 [ ] Support: deflist
 [ ] Support: abbreviations
+[ ] Support: math
+[ ] Support: everything in https://github.com/mb21/markdown-it-pandoc
 [ ] Generate TOC from source
 [ ] Generate PDF
 [ ] PDF page sizes

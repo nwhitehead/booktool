@@ -3,22 +3,32 @@
 //!
 //! A Vue component representing the top level single-page app.
 //!
+<style>
+.h-50 {
+    height: 75vh;
+}
+</style>
 
 <template>
     <section class="section">
         <h1>The App</h1>
-        <div>
-            <Codemirror
-                v-model="localModelValue"
-                :indent-with-tab="true"
-                :tab-size="4"
-                :extensions="[minimalSetup, bracketMatching(), markdownLanguage, consoleLightExtension, lineNumbers(), highlightActiveLine(), highlightActiveLineGutter(), EditorState.allowMultipleSelections.of(true), drawSelection(), rectangularSelection(), crosshairCursor()]"
-                :disabled="false"
-                @update:modelValue="newValue => { localModelValue = newValue; $emit('update:modelValue', newValue); }"
-                @ready="handleReady"
-            />
+        <div class="flex flex-row gap-2 w-screen h-50">
+            <div class="flex-1 shadow-4 overflow-scroll">
+                <Codemirror
+                    v-model="localModelValue"
+                    :indent-with-tab="true"
+                    :tab-size="4"
+                    :extensions="[minimalSetup, bracketMatching(), markdownLanguage, consoleLightExtension, lineNumbers(), highlightActiveLine(), highlightActiveLineGutter(), EditorState.allowMultipleSelections.of(true), drawSelection(), rectangularSelection(), crosshairCursor()]"
+                    :disabled="false"
+                    @update:modelValue="newValue => { localModelValue = newValue; $emit('update:modelValue', newValue); }"
+                    @ready="handleReady"
+                />
+            </div>
+            <div class="flex-1 shadow-4  overflow-scroll">
+                <div v-html="renderMarkdown(localModelValue)">
+                </div>
+            </div>
         </div>
-        <div v-html="renderMarkdown(localModelValue)"></div>
     </section>
 </template>
 
@@ -36,6 +46,8 @@ import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
 import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
 import basicExample from '../test/basic.md?raw';
+import '/node_modules/primeflex/primeflex.css';
+import '/node_modules/primeflex/themes/primeone-light.css';
 
 function renderMarkdown(source) {
     let env = {};
