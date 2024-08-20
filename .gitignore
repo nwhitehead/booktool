@@ -1,2 +1,4 @@
 node_modules/
 dist/
+website/public/
+website/.hugo_build.lock

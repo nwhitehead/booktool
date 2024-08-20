@@ -1,8 +1,9 @@
 - hosts: "{{ variable_host | default('server') }}"
   vars:
-    server_name: "{{ inventory_hostname }}"
-    document_root: /var/www/booktool
+    ansible_ssh_pipelining: true
   tasks:
+
+  # Setup NGINX
     - name: Ensure Nginx is at the latest version
       apt: name=nginx state=latest
     - name: Allow Nginx through ufw firewall
@@ -12,13 +13,13 @@
         state: enabled
     - name: Setup Nginx appserver site
       template:
-        src: ./nginx.conf.j2
-        dest: /etc/nginx/sites-available/booktool
+        src: ./site.conf.j2
+        dest: /etc/nginx/sites-available/shimmermathlabs
       notify: Restart Nginx
     - name: Enable Nginx site
       file:
-        src: /etc/nginx/sites-available/booktool
-        dest: /etc/nginx/sites-enabled/booktool
+        src: /etc/nginx/sites-available/shimmermathlabs
+        dest: /etc/nginx/sites-enabled/shimmermathlabs
         state: link
       notify: Restart Nginx
     - name: Start Nginx

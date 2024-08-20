@@ -1,0 +1,7 @@
+baseURL = 'https://shimmermathlabs.com/'
+languageCode = 'en-us'
+title = 'Shimmer Math Labs'
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

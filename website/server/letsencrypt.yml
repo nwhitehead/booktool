@@ -10,4 +10,4 @@
 
     - name: Get certs
       shell: |
-        certbot --nginx --redirect -n -d {{ inventory_hostname }} -d www.{{ inventory_hostname }} -m {{ acme_email }} --agree-tos
+        certbot --nginx --redirect -n -d shimmermathlabs.com -d www.shimmermathlabs.com -m {{ acme_email }} --agree-tos

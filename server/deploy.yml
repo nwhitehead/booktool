@@ -1,9 +1,0 @@
-- hosts: "{{ variable_host | default('server') }}"
-  vars:
-    server_name: "{{ ansible_default_ipv4.address }}"
-    document_root: /var/www/booktool
-  tasks:
-    - name: Synchronize files
-      synchronize:
-        src: ../dist/
-        dest: /var/www/booktool

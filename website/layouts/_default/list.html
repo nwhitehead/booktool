@@ -1,0 +1,19 @@
+{{ define "main" }}
+    <div class="w-full flex flex-wrap justify-content-center">
+        <div class="px-4 md:px-6 mb-6 max-width-800px flex flex-column">
+            <h1>{{ .Title }}</h1>
+            {{ .Content }}
+            {{ range .Pages }}
+            <div class="flex flex-row flex-wrap md:flex-nowrap">
+                <div class="flex align-items-center justify-content-center m-4 bg-red-400 border-round">
+                    {{ .Params.icon }}
+                </div>
+                <div>
+                    <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+                    {{ .Summary }}    
+                </div>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+{{ end }}
