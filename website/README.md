@@ -10,4 +10,4 @@ Start local server:
 
 To deploy to shimmermathlabs.com:
 
-    ansible-playbook ansible/deploy.yml
+    ansible-playbook server/deploy.yml

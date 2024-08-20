@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.2",
+    "just-install": "^2.0.2",
     "sass": "^1.77.8",
     "vite": "^5.4.1",
     "vite-plugin-cross-origin-isolation": "^0.1.6"
