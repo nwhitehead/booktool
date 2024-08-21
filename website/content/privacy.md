@@ -1,6 +1,6 @@
-# Privacy Policy for Shimmer Labs
+# Privacy Policy for Shimmer Math Labs
 
-At Shimmer Labs, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Shimmer Labs and how we use it.
+At Shimmer Math Labs, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Shimmer Math Labs and how we use it.
 
 If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.
 
@@ -8,13 +8,13 @@ If you have additional questions or require more information about our Privacy P
 
 We are a Data Controller of your information.
 
-Shimmer Labs legal basis for collecting and using the personal information described in this Privacy Policy depends on the Personal Information we collect and the specific context in which we collect the information:
-* Shimmer Labs needs to perform a contract with you
-* You have given Shimmer Labs permission to do so
-* Processing your personal information is in Shimmer Labs legitimate interests
-* Shimmer Labs needs to comply with the law
+Shimmer Math Labs legal basis for collecting and using the personal information described in this Privacy Policy depends on the Personal Information we collect and the specific context in which we collect the information:
+* Shimmer Math Labs needs to perform a contract with you
+* You have given Shimmer Math Labs permission to do so
+* Processing your personal information is in Shimmer Math Labs legitimate interests
+* Shimmer Math Labs needs to comply with the law
 
-Shimmer Labs will retain your personal information only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use your information to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our policies.
+Shimmer Math Labs will retain your personal information only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use your information to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our policies.
 
 If you are a resident of the European Economic Area (EEA), you have certain data protection rights. If you wish to be informed what Personal Information we hold about you and if you want it to be removed from our systems, please contact us.
 
@@ -46,7 +46,7 @@ We collect information about how you use our Service, such as the types of conte
 
 We use cookies to operate and administer our Site, gather usage data on our Site, and improve your experience on it. A "cookie" is a piece of information sent to your browser by a website you visit. Cookies can be stored on your computer for different periods of time. Some cookies expire after a certain amount of time, or upon logging out (session cookies). Others survive after your browser is closed until a defined expiration date set in the cookie (as determined by the third party placing it) and help recognize your computer when you open your browser and browse the Internet again (persistent cookies).
 
-We only use cookies placed by Shimmer Labs for direct operation of the Site. _We do not place any third-party cookies for advertising or analytics_.
+We only use cookies placed by Shimmer Math Labs for direct operation of the Site. _We do not place any third-party cookies for advertising or analytics_.
 
 ## How We Use Personal Information
 
@@ -69,11 +69,11 @@ We may aggregate Personal Information and use the aggregated information to anal
 
 ## Children's Information
 
-Shimmer Labs does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.
+Shimmer Math Labs does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.
 
 ## Online Privacy Policy Only
 
-Our Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or has been collected at Shimmer Labs. This policy is not applicable to any information collected offline or via channels other than this website.
+Our Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or has been collected at Shimmer Math Labs. This policy is not applicable to any information collected offline or via channels other than this website.
 
 ## Consent
 

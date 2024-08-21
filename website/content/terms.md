@@ -8,15 +8,15 @@ software and may not be freely distributed.
 
 ## Grant of Rights
 
-You may use this content in the creation, distribution, and marketing of games
-or other applications. Your license is non-exclusive, non-transferable,
-worldwide, and perpetual. Granted you convert the content yourself you are free
-to use the content with any 3D engine or other tools. You may not sell or make
-this content freely available, sublicense, share, lend, rent or knowingly
-circumvent the intended payment model of this content in any other way. Licenses
-are paid for per-seat and may not be used by more than one person
-simultaneously. Costs must be covered by the licensee and may not be split or
-shared.
+You may use this content in the creation, distribution, and marketing of books,
+games, software tools, digital products, or other applications. Your license is
+non-exclusive, non-transferable, worldwide, and perpetual. Granted you convert
+the content yourself you are free to use the content with any any other tools
+including any 3D engines. You may not sell or make this content freely
+available, sublicense, share, lend, rent or knowingly circumvent the intended
+payment model of this content in any other way. Licenses are paid for per-seat
+and may not be used by more than one person simultaneously. Costs must be
+covered by the licensee and may not be split or shared.
 
 ## Indemnification
 
