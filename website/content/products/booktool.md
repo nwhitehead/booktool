@@ -74,3 +74,9 @@ Book Tool includes dozens of example projects showing:
 * Setting page size and options for flashy guides
 * Advanced Markdown features
 * Supported content types for adding images
+
+### Application
+
+The application itself runs on the following platforms:
+* Any computer able to run the Google Chrome browser
+* 

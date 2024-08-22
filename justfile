@@ -4,17 +4,17 @@ default:
     just --list
 
 # Start dev server for local testing
-dev:
-    vite dev
+app_dev:
+    cd app && vite dev
 
 # Build redistributable application in dist/
-build:
-    vite build    
+app_build:
+    cd app && vite build
 
 # Start website dev server locally
-website:
+website_dev:
     cd website && hugo server
 
 # Deploy website changes
-deploy:
+website_deploy:
     cd website && hugo && ansible-playbook server/deploy.yml
