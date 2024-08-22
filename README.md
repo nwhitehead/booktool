@@ -4,8 +4,18 @@ This is a standalone webapp for creating books.
 
 Idea is you write your book in Markdown, the app converts it to PDF.
 
+## References
+
+Atticus is the main inspiration. Looks fun.
+
 * https://www.atticus.io/
+
+How do you generate EPUB from HTML?
+
 * https://iangmcdowell.com/blog/posts/laying-out-a-book-with-css/
+
+Software for making browsers follow paged CSS styles.
+
 * https://pagedjs.org/documentation/2-getting-started-with-paged.js/#starting-paged.js
 
 ## Tasks
@@ -14,6 +24,7 @@ Idea is you write your book in Markdown, the app converts it to PDF.
 [ ] Markdown rendering to HTML
 [ ] Support frontmatter in Markdown
 [ ] Render frontmatter in HTML
+[ ] Allow images and other includes (how?)
 [ ] Support: code blocks with syntax highlighting
 [ ] Support: subscript
 [ ] Support: superscripts

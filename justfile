@@ -1,8 +1,9 @@
 
+# List available commands
 default:
     just --list
 
-# Start dev server for local play
+# Start dev server for local testing
 dev:
     vite dev
 
