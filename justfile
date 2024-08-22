@@ -11,6 +11,10 @@ app_dev:
 app_build:
     cd app && vite build
 
+# Deploy application (requires previous setup)
+app_deploy:
+    cd app && vite build && ansible-playbook server/deploy.yml
+
 # Start website dev server locally
 website_dev:
     cd website && hugo server

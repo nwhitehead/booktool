@@ -1,7 +1,7 @@
 
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 function addHeaders(server) {
     server.middlewares.use((_req, res, next) => {
@@ -28,23 +28,14 @@ export default defineConfig({
             configureServer: addHeaders,
             configurePreviewServer: addHeaders,
         },
+        nodePolyfills({
+            globals: {
+                Buffer: true,
+            }
+        }),
     ],
     define: {
         // enable hydration mismatch details in production build
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true'
     },
-    optimizeDeps: {
-        esbuildOptions: {
-            // Node.js global to browser globalThis
-            define: {
-                global: 'globalThis',
-            },
-            // Enable esbuild polyfill plugins
-            plugins: [
-                NodeGlobalsPolyfillPlugin({
-                    buffer: true,
-                }),
-            ]
-        }
-    }
 })
