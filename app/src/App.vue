@@ -66,6 +66,7 @@ import markdownKatexPlugin from '@vscode/markdown-it-katex';
 import markdownDeflistPlugin from 'markdown-it-deflist';
 import markdownFootnotePlugin from 'markdown-it-footnote';
 import markdownImplicitFiguresPlugin from 'markdown-it-implicit-figures';
+import markdownGridTablesPlugin from 'markdown-it-gridtables';
 import basicExample from '../test/basic.md?raw';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
@@ -121,6 +122,7 @@ const md = multiuseContainers(containerNames, markdownit({
     figcaption: true,
     keepAlt: true,
 })
+.use(markdownGridTablesPlugin)
 );
 
 const editorObject = ref();

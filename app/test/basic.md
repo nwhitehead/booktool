@@ -85,3 +85,17 @@ belong to the previous footnote. More text.
 ## Implicit Figures
 
 ![A placeholder image.](https://dummyimage.com/300x200/000/fff)
+
+## Grid Tables
+
+A sample grid table.
+
++---------------+---------------+--------------------+
+| Fruit         | Price         | Advantages         |
++===============+===============+====================+
+| Bananas       | $1.34         | - built-in wrapper |
+|               |               | - bright color     |
++---------------+---------------+--------------------+
+| Oranges       | $2.10         | - cures scurvy     |
+|               |               | - tasty            |
++---------------+---------------+--------------------+
