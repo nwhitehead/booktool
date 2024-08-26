@@ -45,6 +45,7 @@ import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
 import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
+import markdownAttrsPlugin from 'markdown-it-attrs';
 import basicExample from '../test/basic.md?raw';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
@@ -52,8 +53,7 @@ import '/node_modules/primeflex/themes/primeone-light.css';
 function renderMarkdown(source) {
     let env = {};
     const result = DOMPurify.sanitize(md.render(source || '', env));
-    console.log(env.frontmatter);
-    return `<pre class="surface-100">${JSON.stringify(env.frontmatter, null, 4)}</pre>${result}`;
+    return `<pre class="surface-100">${JSON.stringify(env.frontmatter, null, 4)}</pre>\n${result}`;
 }
 
 const Theme = EditorView.theme({
@@ -79,19 +79,29 @@ const md = markdownit({
     breaks: false,
     linkify: true,
     quotes: '“”‘’',
+})
+.use(frontmatterPlugin, {})
+.use(markdownAttrsPlugin, {});
 
-}).use(frontmatterPlugin, {});
-
-const view = shallowRef();
+const editorObject = ref();
 
 let localModelValue = ref(basicExample);
 
 watch(localModelValue, (newValue, oldValue) => {
-
+    const state = editorObject.value.state;
+    console.log(state);
+    if (state) {
+        const ranges = state.selection.ranges;
+        const selected = ranges.reduce((r, range) => r + range.to - range.from, 0);
+        const cursor = ranges[0].anchor;
+        const length = state.doc.length;
+        const lines = state.doc.lines;
+        console.log(length);
+    }
 });
 
 function handleReady(payload) {
-    view.value = payload.view;
+    editorObject.value = payload;
 }
 
 </script>

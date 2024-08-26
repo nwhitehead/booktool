@@ -43,3 +43,10 @@ Software for making browsers follow paged CSS styles.
 [ ] PDF options
 [ ] PDF themes
 [ ] PDF fonts
+
+## Services
+
+This project uses the following:
+* [Namecheap](https://www.namecheap.com/) for `shimmermathlabs.com` domain registration.
+* [Vultr](https://www.vultr.com/) for web server hosting
+* [Supabase](https://supabase.com/) for backend database hosting

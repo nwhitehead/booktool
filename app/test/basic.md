@@ -23,4 +23,16 @@ What is (this) magic?
 
 Hopefully this text is looking legible and easy to edit.
 
-~~http://www.example.com~~
+I ~~like~~ love writing in Markdown.
+
+*Italics* are fun. So is **bold**. And the funnest is ***bold italics***.
+
+Autolinking is fun at: http://www.example.com
+
+## Extensions
+
+### Attrs {.bg-primary}
+
+```python {data=asdf}
+nums = [x for x in range(10)]
+```
