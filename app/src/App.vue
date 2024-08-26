@@ -65,6 +65,7 @@ import markdownContainerPlugin from 'markdown-it-container';
 import markdownKatexPlugin from '@vscode/markdown-it-katex';
 import markdownDeflistPlugin from 'markdown-it-deflist';
 import markdownFootnotePlugin from 'markdown-it-footnote';
+import markdownImplicitFiguresPlugin from 'markdown-it-implicit-figures';
 import basicExample from '../test/basic.md?raw';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
@@ -116,6 +117,10 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownKatexPlugin)
 .use(markdownDeflistPlugin)
 .use(markdownFootnotePlugin)
+.use(markdownImplicitFiguresPlugin, {
+    figcaption: true,
+    keepAlt: true,
+})
 );
 
 const editorObject = ref();

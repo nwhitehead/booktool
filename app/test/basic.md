@@ -81,3 +81,7 @@ Here is a footnote reference,[^1] and another.[^longnote]
 
     Subsequent paragraphs are indented to show that they
 belong to the previous footnote. More text.
+
+## Implicit Figures
+
+![A placeholder image.](https://dummyimage.com/300x200/000/fff)
