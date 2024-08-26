@@ -62,9 +62,12 @@ import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
 import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
 import markdownAttrsPlugin from 'markdown-it-attrs';
 import markdownContainerPlugin from 'markdown-it-container';
+import markdownKatexPlugin from '@vscode/markdown-it-katex';
 import basicExample from '../test/basic.md?raw';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
+import '/node_modules/github-markdown-css/github-markdown.css';
+import '/node_modules/katex/dist/katex.min.css';
 
 function renderMarkdown(source) {
     let env = {};
@@ -108,6 +111,7 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(frontmatterPlugin, {})
 .use(markdownAttrsPlugin, {})
 .use(markdownBracketedSpansPlugin, {})
+.use(markdownKatexPlugin)
 );
 
 const editorObject = ref();

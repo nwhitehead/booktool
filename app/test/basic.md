@@ -19,6 +19,8 @@ typeface: 100%
 Some text is here. You can also put [links](http://www.example.com/) to URLs and things.
 What is (this) magic?
 
+This is `backtick` style.
+
 ## Section title
 
 Hopefully this text is looking legible and easy to edit.
@@ -52,3 +54,6 @@ Some text.
 ::: warning
 Warning! Don't read the spoiler. Oops...
 :::
+
+Some math:
+$\sqrt{3x-1}+(1+x)^2$
