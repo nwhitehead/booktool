@@ -18,6 +18,10 @@ Software for making browsers follow paged CSS styles.
 
 * https://pagedjs.org/documentation/2-getting-started-with-paged.js/#starting-paged.js
 
+Markdown for slides open source system:
+
+* https://marp.app/
+
 ## Tasks
 
 [ ] CodeMirror editor working on Markdown

@@ -33,6 +33,22 @@ Autolinking is fun at: http://www.example.com
 
 ### Attrs {.bg-primary}
 
-```python {data=asdf}
+```python
 nums = [x for x in range(10)]
+print(nums) # Print them out
 ```
+
+<!-- With bracketed spans -->
+What is [the answer]{.bg-primary}?
+
+### Containers
+
+::: spoiler
+This is a spoiler container.
+:::
+
+Some text.
+
+::: warning
+Warning! Don't read the spoiler. Oops...
+:::

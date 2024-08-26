@@ -7,6 +7,20 @@
 .h-50 {
     height: 75vh;
 }
+.spoiler {
+    padding: 5px 15px 5px 15px;
+    margin: 5px;
+    border-width: 10px;
+    border-style: solid;
+    border-image: repeating-linear-gradient( 45deg, #ff0,#ff0 3%, #888 3%, #888 6%) 10;
+}
+.warning {
+    padding: 5px 15px 5px 15px;
+    margin: 5px;
+    border-width: 10px;
+    border-style: solid;
+    border-image: repeating-linear-gradient( 45deg, #f00,#f00 3%, #eee 3%, #eee 6%) 10;
+}
 </style>
 
 <template>
@@ -45,7 +59,9 @@ import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
 import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
+import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
 import markdownAttrsPlugin from 'markdown-it-attrs';
+import markdownContainerPlugin from 'markdown-it-container';
 import basicExample from '../test/basic.md?raw';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
@@ -74,14 +90,25 @@ const Theme = EditorView.theme({
     }
 });
 
-const md = markdownit({
+const containerNames = [ 'spoiler', 'warning' ];
+
+function multiuseContainers(names, md) {
+    for (const name of names) {
+        md = md.use(markdownContainerPlugin, name);
+    }
+    return md;
+}
+
+const md = multiuseContainers(containerNames, markdownit({
     html: true,
     breaks: false,
     linkify: true,
     quotes: '“”‘’',
 })
 .use(frontmatterPlugin, {})
-.use(markdownAttrsPlugin, {});
+.use(markdownAttrsPlugin, {})
+.use(markdownBracketedSpansPlugin, {})
+);
 
 const editorObject = ref();
 
