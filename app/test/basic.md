@@ -99,3 +99,7 @@ A sample grid table.
 | Oranges       | $2.10         | - cures scurvy     |
 |               |               | - tasty            |
 +---------------+---------------+--------------------+
+
+## Sub and Sup
+
+Water is just H~2~0. What in the heck^swear^ is going on?

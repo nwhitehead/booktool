@@ -37,6 +37,8 @@
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-gridtables": "^0.6.0",
     "markdown-it-implicit-figures": "^0.12.0",
+    "markdown-it-sub": "^2.0.0",
+    "markdown-it-sup": "^2.0.0",
     "primeflex": "^3.3.1",
     "primevue": "^4.0.4",
     "vite-plugin-node-polyfills": "^0.22.0",
