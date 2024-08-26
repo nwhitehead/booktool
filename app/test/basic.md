@@ -56,4 +56,17 @@ Warning! Don't read the spoiler. Oops...
 :::
 
 Some math:
-$\sqrt{3x-1}+(1+x)^2$
+$$\frac{\sqrt{3x-1}}{(1+x)^2} \cdot e^{x^2} - z$$
+
+## Terms
+
+This is a deflist.
+
+Term
+
+: The definition.
+
+Term 2 with *inline markup*
+
+: This is the second term we are defining with *some markup* both in the term
+and in the definition. Nice, huh?

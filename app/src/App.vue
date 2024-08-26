@@ -63,6 +63,7 @@ import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
 import markdownAttrsPlugin from 'markdown-it-attrs';
 import markdownContainerPlugin from 'markdown-it-container';
 import markdownKatexPlugin from '@vscode/markdown-it-katex';
+import markdownDeflistPlugin from 'markdown-it-deflist';
 import basicExample from '../test/basic.md?raw';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
@@ -112,6 +113,7 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownAttrsPlugin, {})
 .use(markdownBracketedSpansPlugin, {})
 .use(markdownKatexPlugin)
+.use(markdownDeflistPlugin)
 );
 
 const editorObject = ref();
