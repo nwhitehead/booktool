@@ -70,3 +70,14 @@ Term 2 with *inline markup*
 
 : This is the second term we are defining with *some markup* both in the term
 and in the definition. Nice, huh?
+
+## Footnotes
+
+Here is a footnote reference,[^1] and another.[^longnote]
+
+[^1]: Here is the footnote.
+
+[^longnote]: Here's one with multiple blocks.
+
+    Subsequent paragraphs are indented to show that they
+belong to the previous footnote. More text.
