@@ -103,3 +103,9 @@ A sample grid table.
 ## Sub and Sup
 
 Water is just H~2~0. What in the heck^swear^ is going on?
+
+## Task Lists
+
+This is a task list:
+- [x] Something that is finished
+- [ ] Something that is not finished

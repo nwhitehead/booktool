@@ -69,6 +69,7 @@ import markdownImplicitFiguresPlugin from 'markdown-it-implicit-figures';
 import markdownGridTablesPlugin from 'markdown-it-gridtables';
 import markdownSubPlugin from 'markdown-it-sub';
 import markdownSupPlugin from 'markdown-it-sup';
+import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import basicExample from '../test/basic.md?raw';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
@@ -127,6 +128,7 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownGridTablesPlugin)
 .use(markdownSubPlugin)
 .use(markdownSupPlugin)
+.use(markdownTaskListsPlugin)
 );
 
 const editorObject = ref();
