@@ -70,6 +70,7 @@ import markdownGridTablesPlugin from 'markdown-it-gridtables';
 import markdownSubPlugin from 'markdown-it-sub';
 import markdownSupPlugin from 'markdown-it-sup';
 import markdownTaskListsPlugin from 'markdown-it-task-lists';
+import markdownMarkPlugin from 'markdown-it-mark';
 import basicExample from '../test/basic.md?raw';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
@@ -129,6 +130,7 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownSubPlugin)
 .use(markdownSupPlugin)
 .use(markdownTaskListsPlugin)
+.use(markdownMarkPlugin)
 );
 
 const editorObject = ref();
