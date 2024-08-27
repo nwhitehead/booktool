@@ -113,3 +113,14 @@ This is a task list:
 ## Marks
 
 This is something ==marked==.
+
+## Emoji
+
+Full list of names is in [a Github file](https://github.com/markdown-it/markdown-it-emoji/blob/master/lib/data/full.mjs).
+
+Hello from Mars :satellite:
+
+Emoji test: :laughing: :cry: :moon: :star: :100: :soccer:
+:wink:
+:kissing_heart:
+:flushed:
