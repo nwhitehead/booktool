@@ -22,6 +22,10 @@ Markdown for slides open source system:
 
 * https://marp.app/
 
+Converting HTML to PDF:
+
+* https://github.com/parallax/jsPDF
+
 ## Tasks
 
 [ ] CodeMirror editor working on Markdown
@@ -50,7 +54,9 @@ Markdown for slides open source system:
 
 ## Services
 
-This project uses the following:
+This project uses the following services:
 * [Namecheap](https://www.namecheap.com/) for `shimmermathlabs.com` domain registration.
 * [Vultr](https://www.vultr.com/) for web server hosting
 * [Supabase](https://supabase.com/) for backend database hosting
+
+And of course this project uses *lots* of NPM packages, including `markdown-it` and plugins, and `pagedjs`.
