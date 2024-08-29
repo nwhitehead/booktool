@@ -21,11 +21,20 @@
     border-style: solid;
     border-image: repeating-linear-gradient( 45deg, #f00,#f00 3%, #eee 3%, #eee 6%) 10;
 }
+
+p {
+    background-color: #f0f;
+}
+
 </style>
 
 <template>
+    <p>Test</p>
     <section class="section">
         <h1>The App</h1>
+        <button @click="() => outputChoice = 'html'">HTML</button>
+        <button @click="() => outputChoice = 'paged'">Paged</button>
+        <button @click="() => outputChoice = 'frontmatter'">Frontmatter</button>
         <div class="flex flex-row gap-2 w-screen h-50">
             <div class="flex-1 shadow-4 overflow-scroll">
                 <Codemirror
@@ -38,8 +47,8 @@
                     @ready="handleReady"
                 />
             </div>
-            <div class="flex-1 shadow-4  overflow-scroll">
-                <div v-html="renderMarkdown(localModelValue)">
+            <div class="flex-1 shadow-4 overflow-scroll">
+                <div ref="markdownOutput">
                 </div>
             </div>
         </div>
@@ -50,7 +59,7 @@
 
 <script setup>
 
-import { ref, shallowRef, watch } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
@@ -76,35 +85,46 @@ import markdownMarkPlugin from 'markdown-it-mark';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
 import { Previewer } from 'pagedjs';
 import basicExample from '../test/basic.md?raw';
-import interfaceCssUrl from '../test/interface.css?url';
+//import bookCssUrl from '/book.css?url';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
 import '/node_modules/github-markdown-css/github-markdown.css';
 import '/node_modules/katex/dist/katex.min.css';
 
-const pagedOutput = ref(null);
+const outputChoice = ref("paged");
 
-function renderMarkdown(source) {
+// DOM element references
+const markdownOutput = ref(null);
+
+async function renderMarkdown(source, format, element) {
+    if (element === null) {
+        return;
+    }
+    // Generate sanitized HTML content from markdown source (also extracts frontmatter)
     let env = {};
-    const result = DOMPurify.sanitize(md.render(source || '', env));
-    return `<pre class="surface-100">${JSON.stringify(env.frontmatter, null, 4)}</pre>\n${result}`;
-}
-
-let count = 0;
-
-async function renderPaged(source, element) {
-    const cnt = count++;
-    let env = {};
-    console.log(`Start HTML render ${cnt}`);
+    const startRenderTime = performance.now();
     const output = DOMPurify.sanitize(md.render(source || '', env));
-    console.log(`End HTML render ${cnt}`);
-    let paged = new Previewer();
-    // Clean element first
+    const endRenderTime = performance.now();
+    const totalRenderTime = endRenderTime - startRenderTime;
+    console.log(`Markdown HTML render took ${totalRenderTime}ms`);
+
+    // Clear anything in the element
     element.replaceChildren();
-    console.log(`Start pagedjs render ${cnt}`);
-    const flow = await paged.preview(output, [interfaceCssUrl], element);
-    console.log(`End pagedjs render ${cnt}`);
-    console.log("Rendered", flow.total, "pages.");
+
+    if (format == 'frontmatter') {
+        element.innerHTML = `<pre class="surface-100">${JSON.stringify(env.frontmatter, null, 4)}</pre>`;
+    } else if (format == 'html') {
+        element.innerHTML = output;
+    } else if (format == 'paged') {
+        // Generate paged output
+        const startPageRenderTime = performance.now();
+        let paged = new Previewer();
+        //console.log(`URL for style is ${bookCssUrl}`);
+        const flow = await paged.preview(output, null, element);
+        const endPageRenderTime = performance.now();
+        const totalPageRenderTime = endPageRenderTime - startPageRenderTime;
+        console.log(`Paged HTML render took ${totalPageRenderTime}ms for ${flow.total} pages.`);
+    }
 }
 
 const Theme = EditorView.theme({
@@ -162,9 +182,9 @@ const editorObject = ref();
 
 let localModelValue = ref(basicExample);
 
-watch(localModelValue, async (newValue, oldValue) => {
-    console.log(newValue);
-    await renderPaged(newValue, pagedOutput.value);
+watchEffect(async () => {
+    await renderMarkdown(localModelValue.value, outputChoice.value, markdownOutput.value);
+    // await renderPaged(newValue, pagedOutput.value);
     // const state = editorObject.value.state;
     // console.log(state);
     // if (state) {

@@ -7,8 +7,8 @@ function addHeaders(server) {
     server.middlewares.use((_req, res, next) => {
         if (_req.url === '/' || _req.url === '/index.html') {
         } else {
-            res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-            res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+            res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+            res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
         }
         next();
     });
@@ -24,7 +24,7 @@ export default defineConfig({
     plugins: [
         vue(),
         {
-            name: "configure-response-headers",
+            name: 'configure-response-headers',
             configureServer: addHeaders,
             configurePreviewServer: addHeaders,
         },
