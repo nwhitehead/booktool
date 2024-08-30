@@ -2,3 +2,18 @@
 p {
     background-color: #f00;
 }
+
+.spoiler {
+    padding: 5px 15px 5px 15px;
+    margin: 5px;
+    border-width: 10px;
+    border-style: solid;
+    border-image: repeating-linear-gradient( 45deg, #ff0,#ff0 3%, #888 3%, #888 6%) 10;
+}
+.warning {
+    padding: 5px 15px 5px 15px;
+    margin: 5px;
+    border-width: 10px;
+    border-style: solid;
+    border-image: repeating-linear-gradient( 45deg, #f00,#f00 3%, #eee 3%, #eee 6%) 10;
+}

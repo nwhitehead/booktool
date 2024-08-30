@@ -4,9 +4,6 @@
 //! A Vue component representing the top level single-page app.
 //!
 <style>
-.h-50 {
-    height: 75vh;
-}
 .spoiler {
     padding: 5px 15px 5px 15px;
     margin: 5px;
@@ -22,20 +19,25 @@
     border-image: repeating-linear-gradient( 45deg, #f00,#f00 3%, #eee 3%, #eee 6%) 10;
 }
 
-p {
-    background-color: #f0f;
+</style>
+<style scoped>
+.h-50 {
+    height: 75vh;
+}
+.blah {
+    background-color: #ff0;
 }
 
 </style>
 
 <template>
-    <p>Test</p>
+    <p class="blah">Test</p>
     <section class="section">
         <h1>The App</h1>
         <button @click="() => outputChoice = 'html'">HTML</button>
         <button @click="() => outputChoice = 'paged'">Paged</button>
         <button @click="() => outputChoice = 'frontmatter'">Frontmatter</button>
-        <div class="flex flex-row gap-2 w-screen h-50">
+        <div class="flex flex-row gap-2 w-full h-50">
             <div class="flex-1 shadow-4 overflow-scroll">
                 <Codemirror
                     v-model="localModelValue"
@@ -47,14 +49,12 @@ p {
                     @ready="handleReady"
                 />
             </div>
-            <div class="flex-1 shadow-4 overflow-scroll">
-                <div ref="markdownOutput">
-                </div>
+            <div class="flex-1 shadow-4">
+                <iframe ref="markdownOutput" class="border-none" width="100%" height="100%">
+                </iframe>
             </div>
         </div>
     </section>
-    <div class="shadow-4" ref="pagedOutput">
-    </div>
 </template>
 
 <script setup>
@@ -85,7 +85,7 @@ import markdownMarkPlugin from 'markdown-it-mark';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
 import { Previewer } from 'pagedjs';
 import basicExample from '../test/basic.md?raw';
-//import bookCssUrl from '/book.css?url';
+import bookCssUrl from '../test/book.css?url';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
 import '/node_modules/github-markdown-css/github-markdown.css';
@@ -112,18 +112,29 @@ async function renderMarkdown(source, format, element) {
     element.replaceChildren();
 
     if (format == 'frontmatter') {
-        element.innerHTML = `<pre class="surface-100">${JSON.stringify(env.frontmatter, null, 4)}</pre>`;
+        element.contentDocument.body.innerHTML = `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>`;
     } else if (format == 'html') {
-        element.innerHTML = output;
+        element.contentDocument.body.innerHTML = output;
+        //element.innerHTML = output;
     } else if (format == 'paged') {
+        // Setup stylesheet
+        console.log(`Style is ${bookCssUrl}`);
+        const iframe = element.contentDocument;
+        let newstyle = document.createElement('link');
+        newstyle.setAttribute('rel', 'stylesheet');
+        newstyle.setAttribute('type', 'text/css');
+        newstyle.setAttribute('href', bookCssUrl);
+        iframe.getElementsByTagName('head')[0].appendChild(newstyle);
+
         // Generate paged output
+        element.contentDocument.body.innerHTML = ``;
+
         const startPageRenderTime = performance.now();
         let paged = new Previewer();
-        //console.log(`URL for style is ${bookCssUrl}`);
-        const flow = await paged.preview(output, null, element);
-        const endPageRenderTime = performance.now();
-        const totalPageRenderTime = endPageRenderTime - startPageRenderTime;
-        console.log(`Paged HTML render took ${totalPageRenderTime}ms for ${flow.total} pages.`);
+        const flow = await paged.preview(output, null, iframe.body);
+        // const endPageRenderTime = performance.now();
+        // const totalPageRenderTime = endPageRenderTime - startPageRenderTime;
+        // console.log(`Paged HTML render took ${totalPageRenderTime}ms for ${flow.total} pages.`);
     }
 }
 
