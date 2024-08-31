@@ -83,7 +83,6 @@ import markdownSupPlugin from 'markdown-it-sup';
 import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
-import { Previewer } from 'pagedjs';
 import basicExample from '../test/basic.md?raw';
 
 import '/node_modules/primeflex/primeflex.css';
@@ -126,16 +125,10 @@ async function renderMarkdown(source, format, element) {
             payload: output,
         });
     } else if (format == 'paged') {
-        // Generate paged output
-        // Make sure there is something to start with.
-        const startPageRenderTime = performance.now();
-        let paged = new Previewer();
-        // Clear old content
-        //iframe.body.innerHTML = ``;
-        //const flow = await paged.preview(output, [], iframe.body);
-        const endPageRenderTime = performance.now();
-        const totalPageRenderTime = endPageRenderTime - startPageRenderTime;
-        console.log(`Paged HTML render took ${totalPageRenderTime}ms for ${flow.total} pages.`);
+        element.contentWindow.postMessage({
+            action: 'paged',
+            payload: output,
+        });
     }
 }
 
