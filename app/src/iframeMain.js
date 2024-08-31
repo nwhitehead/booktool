@@ -1,7 +1,36 @@
 // iframeMain.js
+import '/node_modules/katex/dist/katex.min.css';
+import bookCssRaw from '../test/book.css?raw';
+import { Previewer } from 'pagedjs';
 
-import { createApp } from 'vue';
-import App from './BookPreview.vue';
+window.PagedConfig = {
+    auto: false,
+    after: (flow) => {
+        console.log('after', flow);
+    },
+};
 
-const app = createApp(App);
-app.mount('#bookpreview');
+const content = document.getElementById('content');
+
+function addStyle(raw) {
+    let newstyle = document.createElement('style');
+    newstyle.innerHTML = raw;
+    document.getElementsByTagName('head')[0].appendChild(newstyle);
+}
+
+window.addEventListener('message', async (msg) => {
+    const { action, payload } = msg.data;
+    console.log(`Received action=${action}`);
+    if (action == 'update') {
+        content.innerHTML = payload;
+    }
+    if (action == 'paged') {
+        console.log('Page...');
+        content.innerHTML = '';
+        addStyle(bookCssRaw);
+        const paged = new Previewer();
+        paged.preview(payload, [], content);
+    }
+});
+
+import('/node_modules/pagedjs/dist/paged.polyfill.min.js');
