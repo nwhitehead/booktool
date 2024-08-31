@@ -1,16 +1,17 @@
 
-p {
-    background-color: #ff0;
-}
 
 @media screen {
 
+p {
+    background-color: #ff0;
+}
+    
 @page {
     size: A5;
 }
 
 @page {
-    margin: 20mm 30mm;
+    margin: 0mm 0mm;
 }
 
 }
