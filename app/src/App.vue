@@ -59,7 +59,7 @@
 
 <script setup>
 
-import { ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
@@ -89,12 +89,27 @@ import bookCssUrl from '../test/book.css?url';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
 import '/node_modules/github-markdown-css/github-markdown.css';
-import '/node_modules/katex/dist/katex.min.css';
+import katexCss from '/node_modules/katex/dist/katex.min.css?url';
 
-const outputChoice = ref("paged");
+import BookPreviewIframe from './BookPreviewIframe.vue';
+
+
+const outputChoice = ref('paged');
 
 // DOM element references
 const markdownOutput = ref(null);
+
+function setStylesheets(urls, root) {
+    let head = root.getElementsByTagName('head')[0];
+    head.replaceChildren();
+    for (let url of urls) {
+        let newstyle = document.createElement('link');
+        newstyle.setAttribute('rel', 'stylesheet');
+        newstyle.setAttribute('type', 'text/css');
+        newstyle.setAttribute('href', url);
+        head.appendChild(newstyle);
+    }
+}
 
 async function renderMarkdown(source, format, element) {
     if (element === null) {
@@ -108,26 +123,21 @@ async function renderMarkdown(source, format, element) {
     const totalRenderTime = endRenderTime - startRenderTime;
     console.log(`Markdown HTML render took ${totalRenderTime}ms`);
 
-    // Clear anything in the element
-    element.replaceChildren();
+    const iframe = element.contentDocument;
+    if (!iframe) return;
+    // Clear old content
+    iframe.body.innerHTML = ``;
+    // Setup stylesheets
+    setStylesheets([bookCssUrl, katexCss], iframe);
 
     if (format == 'frontmatter') {
-        element.contentDocument.body.innerHTML = `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>`;
+        iframe.body.innerHTML = `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>`;
     } else if (format == 'html') {
-        element.contentDocument.body.innerHTML = output;
-        //element.innerHTML = output;
+        iframe.body.innerHTML = output;
     } else if (format == 'paged') {
-        // Setup stylesheet
-        console.log(`Style is ${bookCssUrl}`);
-        const iframe = element.contentDocument;
-        let newstyle = document.createElement('link');
-        newstyle.setAttribute('rel', 'stylesheet');
-        newstyle.setAttribute('type', 'text/css');
-        newstyle.setAttribute('href', bookCssUrl);
-        iframe.getElementsByTagName('head')[0].appendChild(newstyle);
-
         // Generate paged output
-        element.contentDocument.body.innerHTML = ``;
+        // Make sure there is something to start with.
+        iframe.body.innerHTML = ``;
 
         const startPageRenderTime = performance.now();
         let paged = new Previewer();
@@ -193,19 +203,8 @@ const editorObject = ref();
 
 let localModelValue = ref(basicExample);
 
-watchEffect(async () => {
-    await renderMarkdown(localModelValue.value, outputChoice.value, markdownOutput.value);
-    // await renderPaged(newValue, pagedOutput.value);
-    // const state = editorObject.value.state;
-    // console.log(state);
-    // if (state) {
-    //     const ranges = state.selection.ranges;
-    //     const selected = ranges.reduce((r, range) => r + range.to - range.from, 0);
-    //     const cursor = ranges[0].anchor;
-    //     const length = state.doc.length;
-    //     const lines = state.doc.lines;
-    //     console.log(length);
-    // }
+watchEffect(() => {
+    renderMarkdown(localModelValue.value, outputChoice.value, markdownOutput.value);
 });
 
 function handleReady(payload) {
