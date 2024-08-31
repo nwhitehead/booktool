@@ -50,7 +50,7 @@
                 />
             </div>
             <div class="flex-1 shadow-4">
-                <iframe ref="markdownOutput" class="border-none" width="100%" height="100%">
+                <iframe ref="markdownOutput" class="border-none" width="100%" height="100%" :src="iframeHtmlUrl">
                 </iframe>
             </div>
         </div>
@@ -85,34 +85,26 @@ import markdownMarkPlugin from 'markdown-it-mark';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
 import { Previewer } from 'pagedjs';
 import basicExample from '../test/basic.md?raw';
-import bookCssUrl from '../test/book.css?url';
+
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
 import '/node_modules/github-markdown-css/github-markdown.css';
-import katexCss from '/node_modules/katex/dist/katex.min.css?url';
 
-import BookPreviewIframe from './BookPreviewIframe.vue';
+import iframeHtmlUrl from './iframe.html?url';
 
-
-const outputChoice = ref('paged');
+const outputChoice = ref('');
 
 // DOM element references
 const markdownOutput = ref(null);
 
-function setStylesheets(urls, root) {
-    let head = root.getElementsByTagName('head')[0];
-    head.replaceChildren();
-    for (let url of urls) {
-        let newstyle = document.createElement('link');
-        newstyle.setAttribute('rel', 'stylesheet');
-        newstyle.setAttribute('type', 'text/css');
-        newstyle.setAttribute('href', url);
-        head.appendChild(newstyle);
-    }
-}
-
 async function renderMarkdown(source, format, element) {
-    if (element === null) {
+    if (!element) {
+        console.log('No element to render to');
+        return;
+    }
+    const iframe = element.contentDocument;
+    if (!iframe || !iframe.body) {
+        console.log('No iframe');
         return;
     }
     // Generate sanitized HTML content from markdown source (also extracts frontmatter)
@@ -123,28 +115,27 @@ async function renderMarkdown(source, format, element) {
     const totalRenderTime = endRenderTime - startRenderTime;
     console.log(`Markdown HTML render took ${totalRenderTime}ms`);
 
-    const iframe = element.contentDocument;
-    if (!iframe) return;
-    // Clear old content
-    iframe.body.innerHTML = ``;
-    // Setup stylesheets
-    setStylesheets([bookCssUrl, katexCss], iframe);
-
     if (format == 'frontmatter') {
-        iframe.body.innerHTML = `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>`;
+        element.contentWindow.postMessage({
+            action: 'update',
+            payload: `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>`,
+        });
     } else if (format == 'html') {
-        iframe.body.innerHTML = output;
+        element.contentWindow.postMessage({
+            action: 'update',
+            payload: output,
+        });
     } else if (format == 'paged') {
         // Generate paged output
         // Make sure there is something to start with.
-        iframe.body.innerHTML = ``;
-
         const startPageRenderTime = performance.now();
         let paged = new Previewer();
-        const flow = await paged.preview(output, null, iframe.body);
-        // const endPageRenderTime = performance.now();
-        // const totalPageRenderTime = endPageRenderTime - startPageRenderTime;
-        // console.log(`Paged HTML render took ${totalPageRenderTime}ms for ${flow.total} pages.`);
+        // Clear old content
+        //iframe.body.innerHTML = ``;
+        //const flow = await paged.preview(output, [], iframe.body);
+        const endPageRenderTime = performance.now();
+        const totalPageRenderTime = endPageRenderTime - startPageRenderTime;
+        console.log(`Paged HTML render took ${totalPageRenderTime}ms for ${flow.total} pages.`);
     }
 }
 

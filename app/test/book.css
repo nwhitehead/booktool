@@ -1,6 +1,18 @@
 
 p {
-    background-color: #f00;
+    background-color: #ff0;
+}
+
+@media screen {
+
+@page {
+    size: A5;
+}
+
+@page {
+    margin: 20mm 30mm;
+}
+
 }
 
 .spoiler {
