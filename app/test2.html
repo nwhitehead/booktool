@@ -3,33 +3,17 @@
 
 <head>
 
-<style>
-@page {
-  size: A5;
-  margin: 20mm;
-  @bottom-right-corner {
-    vertical-align: center;
-    text-align: center;
-    background: #fafafa;
-    color: purple;
-    content: "P. " counter(page);
-  }
-}
-
-.pagedjs_page {
-  border: 1px solid black;
-  background-color: white;
-}
-
-.myPage {
-  break-after: page;
-}
-</style>
+  <meta charset="utf-8" />
 
 </head>
 
 <body>
 
+<!-- <script>
+window.PagedConfig = {
+  auto: false,
+};
+</script> -->
 <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js"></script>
 <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
 
@@ -39,33 +23,7 @@
   </div>
 </div>
 
-<script>
-const { createApp, ref } = Vue;
-
-const app = createApp({
-  setup() {
-    const pages = ref([]);
-
-    // Generate content for pages
-    function generateContent() {
-      // Simulated content for demonstration
-      const content = [
-        "<h1>Page 1</h1><p>This is content for page 1.</p>",
-        "<h1>Page 2</h1><p>This is content for page 2.</p>",
-        "<h1>Page 3</h1><p>This is content for page 3.</p>"
-      ];
-      pages.value = content;
-    }
-    generateContent();
-
-    return {
-      pages,
-    };
-  }
-});
-
-app.mount('#app');
-</script>
+<script type="module" src="/test2.js"></script>
 </body>
 
 </html>
