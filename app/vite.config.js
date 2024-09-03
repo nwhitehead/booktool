@@ -18,11 +18,6 @@ export default defineConfig({
     build: {
         target: [ 'es2020', 'chrome87', 'firefox78' ],
         sourceMap: true,
-        minify: false,
-        terserOptions: {
-            compress: false,
-            mangle: false,
-        },
     },
     output: {
         inlineDynamicImports: true

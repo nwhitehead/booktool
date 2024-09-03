@@ -36,5 +36,3 @@ window.addEventListener('message', async (msg) => {
         paged.preview(payload, [bookCssUrl], content);
     }
 });
-
-import('/node_modules/pagedjs/dist/paged.polyfill.min.js');
