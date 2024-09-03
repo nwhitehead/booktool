@@ -1,6 +1,6 @@
-import rawStyle from './test2style.css?raw';
-
 const { createApp, ref, onMounted } = Vue;
+
+import './test2style.css';
 
 const app = createApp({
   setup() {
@@ -8,6 +8,7 @@ const app = createApp({
 
     // Generate content for pages
     function generateContent() {
+      console.log('generateContent');
       // Simulated content for demonstration
       const content = [
         "<h1>Page 1</h1><p>This is content for page 1.</p>",
@@ -18,10 +19,11 @@ const app = createApp({
     }
     generateContent();
     onMounted(() => {
-      console.log('mounted');
-      let newstyle = document.createElement('style');
-      newstyle.innerHTML = rawStyle;
-      document.getElementsByTagName('head')[0].appendChild(newstyle);  
+      // console.log('mounted');
+      // let newstyle = document.createElement('style');
+      // newstyle.innerHTML = rawStyle;
+      // document.getElementsByTagName('head')[0].appendChild(newstyle);
+      window.PagedPolyfill.preview();
     });
 
     return {
@@ -30,4 +32,6 @@ const app = createApp({
   }
 });
 
+console.log('Going to mount #app');
 app.mount('#app');
+
