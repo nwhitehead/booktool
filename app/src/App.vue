@@ -84,6 +84,7 @@ import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
 import basicExample from '../test/basic.md?raw';
+import bookCssRaw from '../test/book.css?raw';
 
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
@@ -117,17 +118,24 @@ async function renderMarkdown(source, format, element) {
     if (format == 'frontmatter') {
         element.contentWindow.postMessage({
             action: 'update',
-            payload: `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>`,
+            payload: {
+                html: `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>`,
+            },
         });
     } else if (format == 'html') {
         element.contentWindow.postMessage({
             action: 'update',
-            payload: output,
+            payload: {
+                html: output,
+            },
         });
     } else if (format == 'paged') {
         element.contentWindow.postMessage({
             action: 'paged',
-            payload: output,
+            payload: {
+                html: output,
+                css: bookCssRaw,
+            },
         });
     }
 }
