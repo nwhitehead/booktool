@@ -50,7 +50,7 @@
                 />
             </div>
             <div class="flex-1 shadow-4">
-                <iframe ref="markdownOutput" class="border-none" width="100%" height="100%" :src="iframeHtmlUrl">
+                <iframe ref="markdownOutput" class="border-none" width="100%" height="100%" :src="iframeHtmlUrl" @load="() => { iframeLoaded = true; }">
                 </iframe>
             </div>
         </div>
@@ -59,7 +59,7 @@
 
 <script setup>
 
-import { onMounted, ref, watchEffect } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
@@ -92,10 +92,11 @@ import '/node_modules/github-markdown-css/github-markdown.css';
 
 import iframeHtmlUrl from './iframe.html?url';
 
-const outputChoice = ref('');
+const outputChoice = ref('html');
 
 // DOM element references
 const markdownOutput = ref(null);
+const iframeLoaded = ref(false);
 
 async function renderMarkdown(source, format, element) {
     if (!element) {
@@ -195,8 +196,16 @@ const editorObject = ref();
 
 let localModelValue = ref(basicExample);
 
-watchEffect(() => {
+function updateView() {
     renderMarkdown(localModelValue.value, outputChoice.value, markdownOutput.value);
+}
+
+watchEffect(() => {
+    updateView();
+});
+
+watch(iframeLoaded, () => {
+    updateView();
 });
 
 function handleReady(payload) {

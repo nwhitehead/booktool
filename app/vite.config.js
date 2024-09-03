@@ -19,9 +19,6 @@ export default defineConfig({
         target: [ 'es2020', 'chrome87', 'firefox78' ],
         sourceMap: true,
     },
-    output: {
-        inlineDynamicImports: true
-    },
     plugins: [
         vue(),
         {
