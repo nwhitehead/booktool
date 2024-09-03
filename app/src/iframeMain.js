@@ -3,6 +3,10 @@ import '/node_modules/katex/dist/katex.min.css';
 import bookCssRaw from '../test/book.css?raw';
 import { Previewer } from 'pagedjs';
 
+//import '../test/book.css';
+// Create URL to raw string imported from file (bypasses HMR)
+const bookCssUrl = URL.createObjectURL((new Blob([bookCssRaw], { type: 'text/css' })));
+
 window.PagedConfig = {
     auto: false,
     after: (flow) => {
@@ -27,9 +31,9 @@ window.addEventListener('message', async (msg) => {
     if (action == 'paged') {
         console.log('Page...');
         content.innerHTML = '';
-        addStyle(bookCssRaw);
+        //addStyle(bookCssRaw);
         const paged = new Previewer();
-        paged.preview(payload, [], content);
+        paged.preview(payload, [bookCssUrl], content);
     }
 });
 

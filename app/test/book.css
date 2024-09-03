@@ -1,13 +1,13 @@
 
 @page {
-    size: A4;
+    size: 200mm 200mm;
 }
 
 @page {
     margin: 40mm 40mm;
 }
 
-@media screen {
+@media print {
 
 p {
     background-color: #f00;

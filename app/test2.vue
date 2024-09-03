@@ -1,5 +1,5 @@
 <template>
-    <button @click="onClick">Change</button>
+    <button @click="clicked">Change</button>
     <div class="myPage" v-for="(pageContent, index) in pages" :key="index">
         <div v-html="pageContent"></div>
     </div>
@@ -10,6 +10,12 @@
 import { ref, onMounted } from 'vue';
 
 const pages = ref([]);
+
+function clicked() {
+    console.log('click!');
+    pages.value.push('<h1>Page 4</h1><p>More content for page 4.</p>');
+    console.log(pages);
+}
 
 // Generate content for pages
 function generateContent() {
