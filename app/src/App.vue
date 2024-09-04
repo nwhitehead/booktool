@@ -71,6 +71,7 @@ import markdownSupPlugin from 'markdown-it-sup';
 import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
+import markdownItSourceMap from 'markdown-it-source-map';
 
 import basicExample from '../test/basic.md?raw';
 import bookCssRaw from '../test/book.css?raw';
@@ -179,7 +180,27 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownTaskListsPlugin)
 .use(markdownMarkPlugin)
 .use(markdownEmojiPlugin)
+.use(markdownItSourceMap)
 );
+
+//
+// Inject line numbers for sync scroll. Notes:
+//
+// - We track only headings and paragraphs on first level. That's enough.
+// - Footnotes content causes jumps. Level limit filter it automatically.
+function injectLineNumbers (tokens, idx, options, env, slf) {
+    let line;
+    if (tokens[idx].map && tokens[idx].level === 0) {
+        line = tokens[idx].map[0];
+        tokens[idx].attrJoin('class', 'line');
+        tokens[idx].attrSet('data-line', String(line));
+    }
+    return slf.renderToken(tokens, idx, options, env, slf);
+}
+
+//md.renderer.rules.paragraph_open = md.renderer.rules.heading_open = injectLineNumbers;
+//md.renderer.rules.footnote_open = injectLineNumbers;
+console.log(md.renderer.rules);
 
 const editorObject = ref();
 
