@@ -18,6 +18,7 @@
 
 <template>
     <p class="blah">Test</p>
+    <div ref="editor"></div>
     <section class="section">
         <h1>The App</h1>
         <button @click="() => outputChoice = 'html'">HTML</button>
@@ -45,7 +46,10 @@
 
 <script setup>
 
-import { ref, watch, watchEffect } from 'vue';
+import Editor from '@toast-ui/editor';
+import '@toast-ui/editor/dist/toastui-editor.css';
+
+import { onMounted, ref, watch, watchEffect } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
@@ -81,6 +85,9 @@ import '/node_modules/primeflex/themes/primeone-light.css';
 import '/node_modules/github-markdown-css/github-markdown.css';
 
 import iframeHtmlUrl from './iframe.html?url';
+
+const emit = defineEmits(['update:modelValue']);
+const editor = ref();
 
 const outputChoice = ref('html');
 
@@ -221,5 +228,17 @@ watch(iframeLoaded, () => {
 function handleReady(payload) {
     editorObject.value = payload;
 }
+
+onMounted(() => {
+    const e = new Editor({
+        el: editor.value,
+        height: '500px',
+        initialEditType: 'markdown',
+        previewStyle: 'vertical',
+        events: {
+            change: () => emit('update:modelValue', e.getMarkdown()),
+        },
+    });
+});
 
 </script>
