@@ -31,7 +31,9 @@ I ~~like~~ love writing in Markdown.
 
 Autolinking is fun at: http://www.example.com
 
-## Extensions
+# Extensions
+
+This section title should be a new page.
 
 ### Attrs {.bg-primary}
 

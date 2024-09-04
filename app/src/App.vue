@@ -4,20 +4,6 @@
 //! A Vue component representing the top level single-page app.
 //!
 <style>
-.spoiler {
-    padding: 5px 15px 5px 15px;
-    margin: 5px;
-    border-width: 10px;
-    border-style: solid;
-    border-image: repeating-linear-gradient( 45deg, #ff0,#ff0 3%, #888 3%, #888 6%) 10;
-}
-.warning {
-    padding: 5px 15px 5px 15px;
-    margin: 5px;
-    border-width: 10px;
-    border-style: solid;
-    border-image: repeating-linear-gradient( 45deg, #f00,#f00 3%, #eee 3%, #eee 6%) 10;
-}
 
 </style>
 <style scoped>
@@ -69,6 +55,8 @@ import { markdownLanguage } from '@codemirror/lang-markdown';
 import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
+
+// markdown-it plugins
 import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
 import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
 import markdownAttrsPlugin from 'markdown-it-attrs';
@@ -83,6 +71,7 @@ import markdownSupPlugin from 'markdown-it-sup';
 import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
+
 import basicExample from '../test/basic.md?raw';
 import bookCssRaw from '../test/book.css?raw';
 
