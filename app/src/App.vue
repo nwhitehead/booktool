@@ -229,12 +229,29 @@ function handleReady(payload) {
     editorObject.value = payload;
 }
 
+// Step 1: Define the user plugin function
+function latexPlugin() {
+    const toHTMLRenderers = {
+        sup(node) {
+            const body = 'content';
+
+            return [
+                { type: 'openTag', tagName: 'sup', outerNewLine: false },
+                { type: 'html', content: body },
+                { type: 'closeTag', tagName: 'sup', outerNewLine: false }
+            ];
+        },
+    };
+    return { toHTMLRenderers };
+}
+
 onMounted(() => {
     const e = new Editor({
         el: editor.value,
         height: '500px',
         initialEditType: 'markdown',
         previewStyle: 'vertical',
+        plugins: [latexPlugin],
         events: {
             change: () => emit('update:modelValue', e.getMarkdown()),
         },
