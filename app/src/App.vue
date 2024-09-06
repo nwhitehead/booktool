@@ -17,16 +17,10 @@
 </style>
 
 <template>
-    <div class="flex flex-row">
+    <div class="flex flex-row w-full">
         <div ref="editor" class="w-full"></div>
     </div>
-    <textarea ref="content">{{ basicExample }}</textarea>
-    <section class="section">
-        <div class="flex flex-row gap-2 w-full h-50">
-            <div class="flex-1 shadow-4 overflow-scroll">
-            </div>
-        </div>
-    </section>
+    <textarea ref="content" class="hidden">{{ basicExample }}</textarea>
 </template>
 
 <script setup>
@@ -40,6 +34,10 @@ import { Schema, DOMParser } from 'prosemirror-model';
 import { schema } from 'prosemirror-schema-basic';
 import { addListNodes } from 'prosemirror-schema-list';
 import { exampleSetup } from 'prosemirror-example-setup';
+import {
+    defaultMarkdownParser,
+    defaultMarkdownSerializer
+} from 'prosemirror-markdown';
 
 import basicExample from '../test/basic.md?raw';
 import bookCssRaw from '../test/book.css?raw';
@@ -47,7 +45,8 @@ import bookCssRaw from '../test/book.css?raw';
 import '/node_modules/primeflex/primeflex.css';
 import '/node_modules/primeflex/themes/primeone-light.css';
 import '/node_modules/github-markdown-css/github-markdown.css';
-import '/node_modules/prosemirror-view/style/prosemirror.css';
+import 'prosemirror-view/style/prosemirror.css';
+import 'prosemirror-menu/style/menu.css';
 
 const editor = ref(null);
 const content = ref(null);
@@ -59,13 +58,31 @@ const mySchema = new Schema({
     marks: schema.spec.marks
 });
 
+class ProseMirrorView {
+    constructor(target, content) {
+        this.view = new EditorView(target, {
+            state: EditorState.create({
+                doc: defaultMarkdownParser.parse(content),
+                plugins: exampleSetup({ schema })
+            })
+        })
+    }
+
+    get content() {
+        return defaultMarkdownSerializer.serialize(this.view.state.doc)
+    }
+    focus() { this.view.focus() }
+    destroy() { this.view.destroy() }
+}
+
 onMounted(() => {
-    const view = new EditorView(editor.value, {
-        state: EditorState.create({
-            doc: DOMParser.fromSchema(mySchema).parse(basicExample),
-            plugins: exampleSetup({schema: mySchema}),
-        }),
-    });
+    const view = new ProseMirrorView(editor.value, basicExample)
+    // const view = new EditorView(editor.value, {
+    //     state: EditorState.create({
+    //         doc: DOMParser.fromSchema(mySchema).parse(basicExample),
+    //         plugins: exampleSetup({schema: mySchema}),
+    //     }),
+    // });
 });
 
 </script>
