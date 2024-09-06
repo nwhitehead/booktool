@@ -10,7 +10,16 @@
 
     <body>
         <div id="app"></div>
-        <script type="module" src="/src/main.js"></script>
+
+        <script type="module">
+
+import { createApp } from 'vue';
+import Editor from './Editor.vue';
+
+const app = createApp(Editor);
+app.mount('#app');
+
+        </script>
     </body>
 
 </html>
