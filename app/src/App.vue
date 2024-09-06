@@ -17,6 +17,7 @@
 </style>
 
 <template>
+    <button @click="debug()">DEBUG</button>
     <div class="flex flex-row w-full">
         <div ref="editor" class="w-full"></div>
     </div>
@@ -30,11 +31,12 @@ import DOMPurify from 'dompurify';
 
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Schema, DOMParser } from 'prosemirror-model';
-import { schema } from 'prosemirror-schema-basic';
+import { Schema } from 'prosemirror-model';
+//import { schema } from 'prosemirror-schema-basic';
 import { addListNodes } from 'prosemirror-schema-list';
 import { exampleSetup } from 'prosemirror-example-setup';
 import {
+    schema,
     defaultMarkdownParser,
     defaultMarkdownSerializer
 } from 'prosemirror-markdown';
@@ -55,34 +57,47 @@ const content = ref(null);
 // create a schema with list support.
 const mySchema = new Schema({
     nodes: addListNodes(schema.spec.nodes, 'paragraph block*', 'block'),
-    marks: schema.spec.marks
+    marks: schema.spec.marks,
 });
 
 class ProseMirrorView {
     constructor(target, content) {
+        let parsed = defaultMarkdownParser.parse(content);
+        console.log(`parsed = ${parsed}`);
         this.view = new EditorView(target, {
             state: EditorState.create({
-                doc: defaultMarkdownParser.parse(content),
-                plugins: exampleSetup({ schema })
+                doc: parsed,
+                plugins: exampleSetup({ schema: schema }),
             })
-        })
+        });
     }
-
     get content() {
-        return defaultMarkdownSerializer.serialize(this.view.state.doc)
+        return defaultMarkdownSerializer.serialize(this.view.state.doc);
     }
-    focus() { this.view.focus() }
-    destroy() { this.view.destroy() }
+    get raw() {
+        return this.view.state.doc;
+    }
+    focus() {
+        this.view.focus();
+    }
+    destroy() {
+        this.view.destroy();
+    }
+}
+
+let view = null;
+
+function debug() {
+    console.log(`content = ${view.content}`)
+    console.log(`raw = ${view.raw}`)
 }
 
 onMounted(() => {
-    const view = new ProseMirrorView(editor.value, basicExample)
-    // const view = new EditorView(editor.value, {
-    //     state: EditorState.create({
-    //         doc: DOMParser.fromSchema(mySchema).parse(basicExample),
-    //         plugins: exampleSetup({schema: mySchema}),
-    //     }),
-    // });
+    view = new ProseMirrorView(editor.value, basicExample);
+    const content = view.content;
+    // view.destroy();
+    // view = new ProseMirrorView(editor.value, content);
+    // view.focus();
 });
 
 </script>
