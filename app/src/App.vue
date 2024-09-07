@@ -95,9 +95,6 @@ function debug() {
 onMounted(() => {
     view = new ProseMirrorView(editor.value, basicExample);
     const content = view.content;
-    // view.destroy();
-    // view = new ProseMirrorView(editor.value, content);
-    // view.focus();
 });
 
 </script>
