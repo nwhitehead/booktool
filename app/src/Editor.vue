@@ -1,6 +1,7 @@
 
 
 <template>
+    <button @click="debug">Debug</button>
     <div v-if="editor" class="container">
         <div class="control-group">
             <div class="button-group">
@@ -112,11 +113,16 @@ import './tiptap.scss';
 
 let editor = ref(null);
 
+function debug() {
+    if (!editor.value) return;
+    console.log(editor.value.storage.markdown.getMarkdown());
+}
+
 onMounted(() => {
     editor.value = new Editor({
         extensions: [
-            Color.configure({ types: [TextStyle.name, ListItem.name] }),
-            TextStyle.configure({ types: [ListItem.name] }),
+//            Color.configure({ types: [TextStyle.name, ListItem.name] }),
+//            TextStyle.configure({ types: [ListItem.name] }),
             StarterKit,
             Markdown,
         ],
