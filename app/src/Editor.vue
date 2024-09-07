@@ -106,6 +106,8 @@ import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
 import StarterKit from '@tiptap/starter-kit'
 import { Editor, EditorContent } from '@tiptap/vue-3'
+import { Markdown } from 'tiptap-markdown';
+
 import './tiptap.scss';
 
 let editor = ref(null);
@@ -116,37 +118,28 @@ onMounted(() => {
             Color.configure({ types: [TextStyle.name, ListItem.name] }),
             TextStyle.configure({ types: [ListItem.name] }),
             StarterKit,
+            Markdown,
         ],
         content: `
-          <h2>
-            Hi there,
-          </h2>
-          <p>
-            this is a <em>basic</em> example of <strong>Tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
-          </p>
-          <ul>
-            <li>
-              That’s a bullet list with one …
-            </li>
-            <li>
-              … or two list items.
-            </li>
-          </ul>
-          <p>
-            Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:
-          </p>
-          <pre><code class="language-css">body {
+## Hi there,
+
+this is a *basic* example of **Tiptap**. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
+* That’s a bullet list with one …
+* … or two list items.
+
+Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:
+\`\`\`css
+body {
     display: none;
-  }</code></pre>
-          <p>
-            I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.
-          </p>
-          <blockquote>
-            Wow, that’s amazing. Good work, boy! 👏
-            <br />
-            — Mom
-          </blockquote>
-        `,
+}
+\`\`\`
+
+I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.
+
+>   Wow, that’s amazing. Good work, boy! 👏
+>
+>   — Mom
+`,
     });
 });
 
