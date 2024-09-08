@@ -8,17 +8,17 @@
                 <button @click="editor.chain().focus().toggleBold().run()"
                     :disabled="!editor.can().chain().focus().toggleBold().run()"
                     :class="{ 'is-active': editor.isActive('bold') }">
-                    Bold
+                    <strong>B</strong>
                 </button>
                 <button @click="editor.chain().focus().toggleItalic().run()"
                     :disabled="!editor.can().chain().focus().toggleItalic().run()"
                     :class="{ 'is-active': editor.isActive('italic') }">
-                    Italic
+                    <em>i</em>
                 </button>
                 <button @click="editor.chain().focus().toggleStrike().run()"
                     :disabled="!editor.can().chain().focus().toggleStrike().run()"
                     :class="{ 'is-active': editor.isActive('strike') }">
-                    Strike
+                    <s>s</s>
                 </button>
                 <button @click="editor.chain().focus().toggleCode().run()"
                     :disabled="!editor.can().chain().focus().toggleCode().run()"
@@ -89,10 +89,6 @@
                     :disabled="!editor.can().chain().focus().redo().run()">
                     Redo
                 </button>
-                <button @click="editor.chain().focus().setColor('#958DF1').run()"
-                    :class="{ 'is-active': editor.isActive('textStyle', { color: '#958DF1' }) }">
-                    Purple
-                </button>
             </div>
         </div>
         <editor-content :editor="editor" />
@@ -102,13 +98,12 @@
 <script setup>
 
 import { ref, onMounted } from 'vue';
-import { Color } from '@tiptap/extension-color'
-import ListItem from '@tiptap/extension-list-item'
-import TextStyle from '@tiptap/extension-text-style'
 import StarterKit from '@tiptap/starter-kit'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { Markdown } from 'tiptap-markdown';
+import { MathExtension } from '@aarkue/tiptap-math-extension';
 
+import '/node_modules/katex/dist/katex.min.css';
 import './tiptap.scss';
 
 let editor = ref(null);
@@ -121,10 +116,9 @@ function debug() {
 onMounted(() => {
     editor.value = new Editor({
         extensions: [
-//            Color.configure({ types: [TextStyle.name, ListItem.name] }),
-//            TextStyle.configure({ types: [ListItem.name] }),
             StarterKit,
             Markdown,
+            MathExtension,
         ],
         content: `
 ## Hi there,
