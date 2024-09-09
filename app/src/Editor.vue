@@ -114,6 +114,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { Markdown } from 'tiptap-markdown';
 import { MathExtension } from '@aarkue/tiptap-math-extension';
+import { Node } from '@tiptap/core';
 
 import Container from './extensions/container.js';
 
@@ -123,6 +124,33 @@ import 'primeflex/primeflex.css';
 
 let editor = ref(null);
 let markdown = ref(null);
+
+const CustomNode = Node.create({
+  name: 'myNode',
+  content: 'block+',
+  group: 'block',
+//   defining: true,
+  parseHTML() {
+    return [
+        {
+            tag: `div[data-type="${this.name}"]`,
+        }
+    ];
+  },
+  renderHTML({ node, HTMLAttributes }) {
+    const attributes = mergeAttributes(this.options.HTMLAttributes, HTMLAttributes);
+    return ['div', attributes ];
+  },
+  addCommands() {
+    return {
+        setMath: () => ({ commands }) => {
+            return commands.setNode(this.name);
+        },
+    }
+  },
+
+  // Your code goes here.
+});
 
 function toMarkdown() {
     if (!editor.value) {
@@ -149,6 +177,7 @@ onMounted(() => {
             }),
             MathExtension,
             Container,
+            CustomNode,
         ],
         content: `
 ## Hi there,
