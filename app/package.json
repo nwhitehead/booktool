@@ -29,6 +29,7 @@
     "dompurify": "^3.1.6",
     "github-markdown-css": "^5.6.1",
     "jspdf": "^2.5.1",
+    "markdown-it-container": "^4.0.0",
     "pagedjs": "^0.4.3",
     "primeflex": "^3.3.1",
     "primevue": "^4.0.4",

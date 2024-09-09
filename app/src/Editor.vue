@@ -1,7 +1,8 @@
 
 
 <template>
-    <button @click="debug">Debug</button>
+    <button @click="toMarkdown">toMarkdown</button>
+    <button @click="fromMarkdown">fromMarkdown</button>
     <div v-if="editor" class="container">
         <div class="control-group">
             <div class="button-group">
@@ -93,38 +94,71 @@
         </div>
         <editor-content :editor="editor" />
     </div>
+    <textarea v-model="markdown" class="w-full h-12rem"></textarea>
 </template>
+
+<style>
+.warning {
+    padding: 5px 15px 5px 15px;
+    margin: 5px;
+    border-width: 10px;
+    border-style: solid;
+    border-image: repeating-linear-gradient( 45deg, #f00,#f00 3%, #eee 3%, #eee 6%) 10;
+}
+</style>
 
 <script setup>
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUpdated, watch, watchEffect } from 'vue';
 import StarterKit from '@tiptap/starter-kit'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { Markdown } from 'tiptap-markdown';
 import { MathExtension } from '@aarkue/tiptap-math-extension';
 
-import '/node_modules/katex/dist/katex.min.css';
+import Container from './extensions/container.js';
+
+import 'katex/dist/katex.min.css';
 import './tiptap.scss';
+import 'primeflex/primeflex.css';
 
 let editor = ref(null);
+let markdown = ref(null);
 
-function debug() {
-    if (!editor.value) return;
-    console.log(editor.value.storage.markdown.getMarkdown());
+function toMarkdown() {
+    if (!editor.value) {
+        return;
+    }
+    markdown.value = editor.value.storage.markdown.getMarkdown();
+}
+
+function fromMarkdown() {
+    if (!editor.value) {
+        return;
+    }
+    editor.value.commands.setContent(markdown.value);
 }
 
 onMounted(() => {
     editor.value = new Editor({
         extensions: [
             StarterKit,
-            Markdown,
+            Markdown.configure({
+                transformPastedText: true,
+                transformCopiedText: true,
+                escape: false,
+            }),
             MathExtension,
+            Container,
         ],
         content: `
 ## Hi there,
 
+:::warning
+This is a warning.
+:::
+
 this is a *basic* example of **Tiptap**. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
-* That’s a bullet list with one …
+* That's a bullet list with one …
 * … or two list items.
 
 Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:
@@ -134,6 +168,10 @@ body {
 }
 \`\`\`
 
+Some math:
+
+$$x^2+y^2=z^2$$
+
 I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.
 
 >   Wow, that’s amazing. Good work, boy! 👏
@@ -141,6 +179,19 @@ I know, I know, this is impressive. It’s only the tip of the iceberg though. G
 >   — Mom
 `,
     });
+    toMarkdown();
 });
+
+// onUpdated(() => {
+//     updateMarkdown();
+// });
+
+// watch(markdown, () => {
+//     if (!editor.value) {
+//         return;
+//     }
+//     console.log(`watch markdown changed`);
+//     editor.value.commands.setContent(markdown.value);
+// });
 
 </script>
