@@ -6,6 +6,9 @@
     <div v-if="editor" class="container">
         <div class="control-group">
             <div class="button-group">
+                <button @click="editor.chain().focus().setMath().run()">
+                    Math
+                </button>
                 <button @click="editor.chain().focus().toggleBold().run()"
                     :disabled="!editor.can().chain().focus().toggleBold().run()"
                     :class="{ 'is-active': editor.isActive('bold') }">
@@ -127,9 +130,10 @@ let markdown = ref(null);
 
 const CustomNode = Node.create({
   name: 'myNode',
-  content: 'block+',
-  group: 'block',
-//   defining: true,
+  // content: 'block+',
+  content: 'inline*',
+  // group: 'block',
+  // defining: true,
   parseHTML() {
     return [
         {
@@ -139,7 +143,7 @@ const CustomNode = Node.create({
   },
   renderHTML({ node, HTMLAttributes }) {
     const attributes = mergeAttributes(this.options.HTMLAttributes, HTMLAttributes);
-    return ['div', attributes ];
+    return ['div', attributes, 0 ];
   },
   addCommands() {
     return {
