@@ -1,8 +1,6 @@
 
 
 <template>
-    <button @click="toMarkdown">toMarkdown</button>
-    <button @click="fromMarkdown">fromMarkdown</button>
     <div v-if="editor" class="container">
         <div class="control-group">
             <div class="button-group">
@@ -97,7 +95,6 @@
         </div>
         <editor-content :editor="editor" />
     </div>
-    <textarea v-model="markdown" class="w-full h-12rem"></textarea>
 </template>
 
 <style>
@@ -115,25 +112,26 @@
 import { ref, onMounted, onUpdated, watch, watchEffect } from 'vue';
 import StarterKit from '@tiptap/starter-kit'
 import { Editor, EditorContent } from '@tiptap/vue-3'
-import { Markdown } from 'tiptap-markdown';
 import { MathExtension } from '@aarkue/tiptap-math-extension';
 import { mergeAttributes, Node } from '@tiptap/core';
 
 import Container from './extensions/container.js';
+import VueComponent from './MathExtension.js';
 
 import 'katex/dist/katex.min.css';
 import './tiptap.scss';
 import 'primeflex/primeflex.css';
 
 let editor = ref(null);
-let markdown = ref(null);
 
 const CustomNode = Node.create({
   name: 'myNode',
-  // Allow 0 or more inline elements inside this node
-  content: 'inline*',
-  // This node is a block
-  group: 'block',
+  // This node is inline
+  group: 'inline',
+  inline: true,
+  selectable: true,
+  atom: true,
+
   parseHTML() {
     return [
         {
@@ -148,7 +146,6 @@ const CustomNode = Node.create({
   addCommands() {
     return {
         setMath: () => ({ commands }) => {
-            console.log(`Running setMath()`);
             return commands.setNode(this.name);
         },
     }
@@ -157,75 +154,21 @@ const CustomNode = Node.create({
   // Your code goes here.
 });
 
-function toMarkdown() {
-    if (!editor.value) {
-        return;
-    }
-    markdown.value = editor.value.storage.markdown.getMarkdown();
-}
-
-function fromMarkdown() {
-    if (!editor.value) {
-        return;
-    }
-    editor.value.commands.setContent(markdown.value);
-}
-
 onMounted(() => {
     editor.value = new Editor({
         extensions: [
             StarterKit,
-            Markdown.configure({
-                transformPastedText: true,
-                transformCopiedText: true,
-                escape: false,
-            }),
             MathExtension,
             Container,
             CustomNode,
+            VueComponent,
         ],
         content: `
-## Hi there,
-
-:::warning
-This is a warning.
-:::
-
-this is a *basic* example of **Tiptap**. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
-* That's a bullet list with one …
-* … or two list items.
-
-Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:
-\`\`\`css
-body {
-    display: none;
-}
-\`\`\`
-
-Some math:
-
-$$x^2+y^2=z^2$$
-
-I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.
-
->   Wow, that’s amazing. Good work, boy! 👏
->
->   — Mom
+        <p>Some text.</p>
+        <vue-component count="0"></vue-component>
+        <p>Some more text.</p>
 `,
     });
-    toMarkdown();
 });
-
-// onUpdated(() => {
-//     updateMarkdown();
-// });
-
-// watch(markdown, () => {
-//     if (!editor.value) {
-//         return;
-//     }
-//     console.log(`watch markdown changed`);
-//     editor.value.commands.setContent(markdown.value);
-// });
 
 </script>
