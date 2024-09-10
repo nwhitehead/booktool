@@ -117,7 +117,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { Markdown } from 'tiptap-markdown';
 import { MathExtension } from '@aarkue/tiptap-math-extension';
-import { Node } from '@tiptap/core';
+import { mergeAttributes, Node } from '@tiptap/core';
 
 import Container from './extensions/container.js';
 
@@ -130,10 +130,10 @@ let markdown = ref(null);
 
 const CustomNode = Node.create({
   name: 'myNode',
-  // content: 'block+',
+  // Allow 0 or more inline elements inside this node
   content: 'inline*',
-  // group: 'block',
-  // defining: true,
+  // This node is a block
+  group: 'block',
   parseHTML() {
     return [
         {
@@ -142,12 +142,13 @@ const CustomNode = Node.create({
     ];
   },
   renderHTML({ node, HTMLAttributes }) {
-    const attributes = mergeAttributes(this.options.HTMLAttributes, HTMLAttributes);
+    const attributes = mergeAttributes({ 'data-type': this.name }, this.options.HTMLAttributes, HTMLAttributes);
     return ['div', attributes, 0 ];
   },
   addCommands() {
     return {
         setMath: () => ({ commands }) => {
+            console.log(`Running setMath()`);
             return commands.setNode(this.name);
         },
     }
