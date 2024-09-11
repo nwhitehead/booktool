@@ -8,8 +8,8 @@ export default Node.create({
     name: 'vueComponent',
 
     group: 'block',
-
-    atom: true,
+    content: 'inline*',
+    // atom: true,
 
     addAttributes() {
         return {

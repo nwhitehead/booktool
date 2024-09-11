@@ -1,19 +1,20 @@
 
 <template>
     <node-view-wrapper class="vue-component">
-        <label>Vue Component</label>
+        <label contenteditable="false">Vue Component</label>
 
         <div class="content">
             <button @click="increase">
                 This button has been clicked {{ node.attrs.count }} times.
             </button>
+            <node-view-content class="content is-editable" />
         </div>
     </node-view-wrapper>
 </template>
 
 <script setup>
 
-import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
+import { nodeViewProps, NodeViewContent, NodeViewWrapper } from '@tiptap/vue-3'
 
 const props = defineProps(nodeViewProps);
 
