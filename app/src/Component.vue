@@ -11,25 +11,18 @@
     </node-view-wrapper>
 </template>
 
-<script>
+<script setup>
 
 import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
 
-export default {
-    components: {
-        NodeViewWrapper,
-    },
+const props = defineProps(nodeViewProps);
 
-    props: nodeViewProps,
-
-    methods: {
-        increase() {
-            this.updateAttributes({
-                count: this.node.attrs.count + 1,
-            })
-        },
-    },
+function increase() {
+    props.updateAttributes({
+        count: props.node.attrs.count + 1,
+    })
 }
+
 </script>
   
 <style lang="scss">

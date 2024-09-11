@@ -4,6 +4,9 @@
     <div v-if="editor" class="container">
         <div class="control-group">
             <div class="button-group">
+                <button @click="debug">
+                    Debug
+                </button>
                 <button @click="editor.chain().focus().setMath().run()">
                     Math
                 </button>
@@ -154,6 +157,11 @@ const CustomNode = Node.create({
   // Your code goes here.
 });
 
+function debug() {
+    console.log('Debug');
+    console.log(editor.value.getJSON());
+}
+
 onMounted(() => {
     editor.value = new Editor({
         extensions: [
@@ -165,7 +173,7 @@ onMounted(() => {
         ],
         content: `
         <p>Some text.</p>
-        <vue-component count="0"></vue-component>
+        <vue-component count="10"></vue-component>
         <p>Some more text.</p>
 `,
     });
