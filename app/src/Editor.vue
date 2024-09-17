@@ -121,7 +121,6 @@ import { mergeAttributes, Node } from '@tiptap/core';
 import Container from './extensions/container.js';
 import VueComponent from './MathExtension.js';
 
-import 'katex/dist/katex.min.css';
 import './tiptap.scss';
 import 'primeflex/primeflex.css';
 

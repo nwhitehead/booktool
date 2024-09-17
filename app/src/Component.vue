@@ -3,50 +3,38 @@
     <NodeViewWrapper class="vue-component">
         <label contenteditable="false">Vue Component</label>
 
-        <div class="content">
-            <div ref="rendered"></div>
-            <button @click="increase">
-                This button has been clicked {{ node.attrs.count }} times.
-            </button>
-            <NodeViewContent class="content is-editable" />
+        <div class="content" @click="editing = true">
+            <div v-show="!editing" ref="rendered"></div>
+            <textarea v-if="editing" v-model="src"></textarea>
+            <button v-if="editing" @click.stop="editing = false">Show</button>
         </div>
     </NodeViewWrapper>
 </template>
 
 <script setup>
 
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { nodeViewProps, NodeViewContent, NodeViewWrapper } from '@tiptap/vue-3'
 import katex from 'katex';
 
 import 'katex/dist/katex.min.css';
 
-
 const props = defineProps(nodeViewProps);
 const rendered = ref(null);
+const src = ref('');
+const editing = ref(true);
 
-function generateMath() {
-    return katex;
-}
-
-function getNodeContentText(node) {
-    let contents = node.content.content;
-    if (contents.length === 0) {
-        return '';
-    }
-    return contents[0].text;
-}
-
-function increase() {
+watch(editing, () => {
     props.updateAttributes({
-        count: props.node.attrs.count + 1,
+        src: src.value,
     });
-    const src = getNodeContentText(props.node);
-    katex.render(src, rendered.value, {
-        throwOnError: false,
-        displayMode: true,
-    });
-}
+    if (rendered.value) {
+        katex.render(props.node.attrs.src, rendered.value, {
+            throwOnError: false,
+            displayMode: true,
+        });
+    }
+});
 
 </script>
   
