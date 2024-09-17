@@ -1,27 +1,51 @@
 
 <template>
-    <node-view-wrapper class="vue-component">
+    <NodeViewWrapper class="vue-component">
         <label contenteditable="false">Vue Component</label>
 
         <div class="content">
+            <div ref="rendered"></div>
             <button @click="increase">
                 This button has been clicked {{ node.attrs.count }} times.
             </button>
-            <node-view-content class="content is-editable" />
+            <NodeViewContent class="content is-editable" />
         </div>
-    </node-view-wrapper>
+    </NodeViewWrapper>
 </template>
 
 <script setup>
 
+import { ref } from 'vue';
 import { nodeViewProps, NodeViewContent, NodeViewWrapper } from '@tiptap/vue-3'
+import katex from 'katex';
+
+import 'katex/dist/katex.min.css';
+
 
 const props = defineProps(nodeViewProps);
+const rendered = ref(null);
+
+function generateMath() {
+    return katex;
+}
+
+function getNodeContentText(node) {
+    let contents = node.content.content;
+    if (contents.length === 0) {
+        return '';
+    }
+    return contents[0].text;
+}
 
 function increase() {
     props.updateAttributes({
         count: props.node.attrs.count + 1,
-    })
+    });
+    const src = getNodeContentText(props.node);
+    katex.render(src, rendered.value, {
+        throwOnError: false,
+        displayMode: true,
+    });
 }
 
 </script>
