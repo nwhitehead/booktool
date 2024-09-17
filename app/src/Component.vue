@@ -1,19 +1,17 @@
 
 <template>
     <NodeViewWrapper class="vue-component">
-        <label contenteditable="false">Vue Component</label>
-
-        <div class="content" @click="editing = true">
+        <span class="content flex flex-column" @click="editing = true">
             <div v-show="!editing" ref="rendered"></div>
             <textarea v-if="editing" v-model="src"></textarea>
             <button v-if="editing" @click.stop="editing = false">Show</button>
-        </div>
+        </span>
     </NodeViewWrapper>
 </template>
 
 <script setup>
 
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { nodeViewProps, NodeViewContent, NodeViewWrapper } from '@tiptap/vue-3'
 import katex from 'katex';
 
@@ -24,16 +22,14 @@ const rendered = ref(null);
 const src = ref('');
 const editing = ref(true);
 
-watch(editing, () => {
-    props.updateAttributes({
-        src: src.value,
-    });
-    if (rendered.value) {
+onMounted(() => {
+    watch(editing, () => {
+        props.updateAttributes({ src: src.value });
         katex.render(props.node.attrs.src, rendered.value, {
             throwOnError: false,
             displayMode: true,
         });
-    }
+    });
 });
 
 </script>
@@ -52,7 +48,7 @@ watch(editing, () => {
         background-color: var(--purple-light);
         border: 2px solid var(--purple);
         border-radius: 0.5rem;
-        margin: 2rem 0;
+        margin: 0;
         position: relative;
 
         label {
