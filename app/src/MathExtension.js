@@ -5,15 +5,12 @@ import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import Component from './Component.vue';
 
 export default Node.create({
-    name: 'vueComponent',
+    name: 'math',
 
     group: 'block',
 
     addAttributes() {
         return {
-            count: {
-                default: 0,
-            },
             src: {
                 default: '',
             },
@@ -23,13 +20,13 @@ export default Node.create({
     parseHTML() {
         return [
             {
-                tag: 'vue-component',
+                tag: 'math',
             },
         ];
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['vue-component', mergeAttributes(HTMLAttributes)];
+        return ['math', mergeAttributes(HTMLAttributes)];
     },
 
     addNodeView() {

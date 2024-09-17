@@ -119,7 +119,7 @@ import { MathExtension } from '@aarkue/tiptap-math-extension';
 import { mergeAttributes, Node } from '@tiptap/core';
 
 import Container from './extensions/container.js';
-import VueComponent from './MathExtension.js';
+import Math from './MathExtension.js';
 
 import './tiptap.scss';
 import 'primeflex/primeflex.css';
@@ -168,11 +168,11 @@ onMounted(() => {
             MathExtension,
             Container,
             CustomNode,
-            VueComponent,
+            Math,
         ],
         content: `
         <p>Some text.</p>
-        <vue-component count="10"></vue-component>
+        <math src="x^2"></math>
         <p>Some more text.</p>
 `,
     });
