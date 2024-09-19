@@ -6,20 +6,12 @@
         <meta property="og:title" content="Nathan's Book Tool" />
         <meta property="og:description" content="Browser-based book generator tool" />
         <title>Nathan's Book Tool</title>
+        <style id="prismtheme"></style>
     </head>
 
     <body>
         <div id="app"></div>
-
-        <script type="module">
-
-import { createApp } from 'vue';
-import Editor from './src/Editor.vue';
-
-const app = createApp(Editor);
-app.mount('#app');
-
-        </script>
+        <script type="module" src="/src/main.js"></script>
     </body>
 
 </html>
