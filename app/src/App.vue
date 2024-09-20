@@ -191,38 +191,40 @@ const md = multiuseContainers(containerNames, markdownit({
 //.use(markdownInjectLineNumbers)
 );
 
-//
-// Inject line numbers for sync scroll. Notes:
-//
-// - We track only headings and paragraphs on first level. That's enough.
-// - Footnotes content causes jumps. Level limit filter it automatically.
-function injectLineNumbers (tokens, idx, options, env, slf) {
-    if (tokens[idx].map /* && tokens[idx].level === 0 */) {
-        const lineStart = tokens[idx].map[0];
-        const lineEnd = tokens[idx].map.at(-1);
-        console.log(`injectLineNubmers ${tokens[idx].map}`);
-        tokens[idx].attrJoin('class', 'line');
-        tokens[idx].attrSet('data-line', String(lineStart));
-        tokens[idx].attrSet('data-line-end', String(lineEnd));
+function injectSourceMap(token) {
+    // Given a token, add attributes to source range of lines
+    // If there is no map, just ignore
+    if (token.map) {
+        token.attrPush(['data-source-line-start', token.map[0] + 1])
+        token.attrPush(['data-source-line-end', token.map.at(-1) + 1])
     }
-    return slf.renderToken(tokens, idx, options, env, slf);
 }
 
-md.renderer.rules.paragraph_open = md.renderer.rules.heading_open = injectLineNumbers;
-md.renderer.rules.footnote_open = injectLineNumbers;
-const def_math_block= md.renderer.rules.math_block;
-console.log(def_math_block);
+// Rule to inject source lines into output
+// This adds attributes to tokens at rule stage
+// This is needed for fence blocks, which are transformed during rules phase before rendering
+function injectLineNumbers(originalFunction){
+    return (tokens, idx, options, env, slf) => {
+        injectSourceMap(tokens[idx]);
+        return originalFunction(tokens, idx, options, env, slf);
+    }
+}
+md.renderer.rules.fence = injectLineNumbers(md.renderer.rules.fence);
+
+const originalRenderToken = md.renderer.renderToken.bind(md.renderer);
+md.renderer.renderToken = function (tokens, idx, options) {
+    const token = tokens[idx];
+    if (token.map !== null && token.type.endsWith('_open')) {
+        injectSourceMap(token);
+    }
+    return originalRenderToken(tokens, idx, options);
+};
+
+const originalMathBlockRenderer = md.renderer.rules.math_block;
 md.renderer.rules.math_block = function(tokens, idx, options, env, slf) {
     console.log(`math_block wrapper ${idx}`);
-    if (tokens[idx].map /* && tokens[idx].level === 0 */) {
-        const line = tokens[idx].map[0];
-        console.log(`math_block wrapper line=${line}`);
-        const res = def_math_block(tokens, idx, options, env, slf);
-        tokens[idx].attrJoin('class', 'line');
-        tokens[idx].attrSet('data-line', String(line));
-        return res;
-    }
-    return def_math_block(tokens, idx, options, env, slf);
+    injectSourceMap(tokens[idx]);
+    return `<div class="katex-block">${originalMathBlockRenderer(tokens, idx, options, env, slf)}</div>`;
 };
 
 const editorObject = ref();
