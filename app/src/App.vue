@@ -17,12 +17,12 @@
 </style>
 
 <template>
-    <p class="blah">Test</p>
     <section class="section">
         <h1>The App</h1>
         <button @click="() => outputChoice = 'html'">HTML</button>
         <button @click="() => outputChoice = 'paged'">Paged</button>
         <button @click="() => outputChoice = 'frontmatter'">Frontmatter</button>
+        <button @click="() => outputChoice = 'debug'">Debug</button>
         <div class="flex flex-row gap-2 w-full h-50">
             <div class="flex-1 shadow-4 overflow-scroll">
                 <Codemirror
@@ -61,7 +61,7 @@ import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
 import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
 import markdownAttrsPlugin from 'markdown-it-attrs';
 import markdownContainerPlugin from 'markdown-it-container';
-import markdownKatexPlugin from '@vscode/markdown-it-katex';
+import markdownMathPlugin from '@vscode/markdown-it-katex';
 import markdownDeflistPlugin from 'markdown-it-deflist';
 import markdownFootnotePlugin from 'markdown-it-footnote';
 import markdownImplicitFiguresPlugin from 'markdown-it-implicit-figures';
@@ -72,6 +72,7 @@ import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
 import markdownItSourceMap from 'markdown-it-source-map';
+import markdownInjectLineNumbers from 'markdown-it-inject-linenumbers';
 
 import basicExample from '../test/basic.md?raw';
 import bookCssRaw from '../test/book.css?raw';
@@ -118,6 +119,13 @@ async function renderMarkdown(source, format, element) {
             action: 'update',
             payload: {
                 html: output,
+            },
+        });
+    } else if (format == 'debug') {
+        element.contentWindow.postMessage({
+            action: 'update',
+            payload: {
+                html: `<pre>${JSON.stringify(md.parse(source, { references: {} }), null, 2)}</pre>`,
             },
         });
     } else if (format == 'paged') {
@@ -167,7 +175,7 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(frontmatterPlugin, {})
 .use(markdownAttrsPlugin, {})
 .use(markdownBracketedSpansPlugin, {})
-.use(markdownKatexPlugin)
+.use(markdownMathPlugin)
 .use(markdownDeflistPlugin)
 .use(markdownFootnotePlugin)
 .use(markdownImplicitFiguresPlugin, {
@@ -180,7 +188,7 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownTaskListsPlugin)
 .use(markdownMarkPlugin)
 .use(markdownEmojiPlugin)
-.use(markdownItSourceMap)
+//.use(markdownInjectLineNumbers)
 );
 
 //
@@ -189,18 +197,33 @@ const md = multiuseContainers(containerNames, markdownit({
 // - We track only headings and paragraphs on first level. That's enough.
 // - Footnotes content causes jumps. Level limit filter it automatically.
 function injectLineNumbers (tokens, idx, options, env, slf) {
-    let line;
-    if (tokens[idx].map && tokens[idx].level === 0) {
-        line = tokens[idx].map[0];
+    if (tokens[idx].map /* && tokens[idx].level === 0 */) {
+        const lineStart = tokens[idx].map[0];
+        const lineEnd = tokens[idx].map.at(-1);
+        console.log(`injectLineNubmers ${tokens[idx].map}`);
         tokens[idx].attrJoin('class', 'line');
-        tokens[idx].attrSet('data-line', String(line));
+        tokens[idx].attrSet('data-line', String(lineStart));
+        tokens[idx].attrSet('data-line-end', String(lineEnd));
     }
     return slf.renderToken(tokens, idx, options, env, slf);
 }
 
-//md.renderer.rules.paragraph_open = md.renderer.rules.heading_open = injectLineNumbers;
-//md.renderer.rules.footnote_open = injectLineNumbers;
-console.log(md.renderer.rules);
+md.renderer.rules.paragraph_open = md.renderer.rules.heading_open = injectLineNumbers;
+md.renderer.rules.footnote_open = injectLineNumbers;
+const def_math_block= md.renderer.rules.math_block;
+console.log(def_math_block);
+md.renderer.rules.math_block = function(tokens, idx, options, env, slf) {
+    console.log(`math_block wrapper ${idx}`);
+    if (tokens[idx].map /* && tokens[idx].level === 0 */) {
+        const line = tokens[idx].map[0];
+        console.log(`math_block wrapper line=${line}`);
+        const res = def_math_block(tokens, idx, options, env, slf);
+        tokens[idx].attrJoin('class', 'line');
+        tokens[idx].attrSet('data-line', String(line));
+        return res;
+    }
+    return def_math_block(tokens, idx, options, env, slf);
+};
 
 const editorObject = ref();
 
