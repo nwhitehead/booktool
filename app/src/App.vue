@@ -220,11 +220,16 @@ md.renderer.renderToken = function (tokens, idx, options) {
     return originalRenderToken(tokens, idx, options);
 };
 
+function generateAttrs(attrs) {
+    const attrStrings = attrs.map((attr) => `${attr[0]}="${attr[1]}"`);
+    return attrStrings.join(' ');
+}
+
 const originalMathBlockRenderer = md.renderer.rules.math_block;
 md.renderer.rules.math_block = function(tokens, idx, options, env, slf) {
-    console.log(`math_block wrapper ${idx}`);
     injectSourceMap(tokens[idx]);
-    return `<div class="katex-block">${originalMathBlockRenderer(tokens, idx, options, env, slf)}</div>`;
+    const attrString = generateAttrs(tokens[idx].attrs);
+    return `<div class="katex-block" ${attrString}>${originalMathBlockRenderer(tokens, idx, options, env, slf)}</div>`;
 };
 
 const editorObject = ref();
