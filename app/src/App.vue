@@ -71,8 +71,6 @@ import markdownSupPlugin from 'markdown-it-sup';
 import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
-import markdownItSourceMap from 'markdown-it-source-map';
-import markdownInjectLineNumbers from 'markdown-it-inject-linenumbers';
 
 import basicExample from '../test/basic.md?raw';
 import bookCssRaw from '../test/book.css?raw';
