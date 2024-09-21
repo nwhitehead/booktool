@@ -65,7 +65,7 @@ import markdownMathPlugin from '@vscode/markdown-it-katex';
 import markdownDeflistPlugin from 'markdown-it-deflist';
 import markdownFootnotePlugin from 'markdown-it-footnote';
 import markdownImplicitFiguresPlugin from 'markdown-it-implicit-figures';
-import markdownGridTablesPlugin from 'markdown-it-gridtables';
+import markdownTablesPlugin from 'markdown-it-multimd-table-ext';
 import markdownSubPlugin from 'markdown-it-sub';
 import markdownSupPlugin from 'markdown-it-sup';
 import markdownTaskListsPlugin from 'markdown-it-task-lists';
@@ -180,7 +180,9 @@ const md = multiuseContainers(containerNames, markdownit({
     figcaption: true,
     keepAlt: true,
 })
-.use(markdownGridTablesPlugin)
+.use(markdownTablesPlugin, {
+    multiline: true,
+})
 .use(markdownSubPlugin)
 .use(markdownSupPlugin)
 .use(markdownTaskListsPlugin)
@@ -196,6 +198,9 @@ function injectSourceMap(token) {
         token.attrPush(['data-source-line-start', token.map[0] + 1])
         token.attrPush(['data-source-line-end', token.map.at(-1) + 1])
     }
+    if (token.type === 'bullet_list_open') {
+        console.log(token);
+    }
 }
 
 // Rule to inject source lines into output
@@ -209,6 +214,7 @@ function injectLineNumbers(originalFunction){
 }
 md.renderer.rules.fence = injectLineNumbers(md.renderer.rules.fence);
 
+// Inject source lines into all _open style tokens.
 const originalRenderToken = md.renderer.renderToken.bind(md.renderer);
 md.renderer.renderToken = function (tokens, idx, options) {
     const token = tokens[idx];
@@ -218,6 +224,7 @@ md.renderer.renderToken = function (tokens, idx, options) {
     return originalRenderToken(tokens, idx, options);
 };
 
+// Math needs extra work to get sourcemap
 function generateAttrs(attrs) {
     const attrStrings = attrs.map((attr) => `${attr[0]}="${attr[1]}"`);
     return attrStrings.join(' ');
@@ -225,9 +232,21 @@ function generateAttrs(attrs) {
 
 const originalMathBlockRenderer = md.renderer.rules.math_block;
 md.renderer.rules.math_block = function(tokens, idx, options, env, slf) {
+    // Inject sourcemap to attrs
     injectSourceMap(tokens[idx]);
+    // Now manually generate attrs for wrapping div
+    // Call original katex renderer inside
     const attrString = generateAttrs(tokens[idx].attrs);
     return `<div class="katex-block" ${attrString}>${originalMathBlockRenderer(tokens, idx, options, env, slf)}</div>`;
+};
+
+// Make links open in new tab
+var defaultRenderLinkOpen = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
+  return self.renderToken(tokens, idx, options);
+};
+md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+  tokens[idx].attrSet('target', '_blank');
+  return defaultRenderLinkOpen(tokens, idx, options, env, self);
 };
 
 const editorObject = ref();

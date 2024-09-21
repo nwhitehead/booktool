@@ -23,3 +23,22 @@ window.addEventListener('message', async (msg) => {
         paged.preview(payload.html || '', [cssUrl], content);
     }
 });
+
+function findSource(elem) {
+    /// Find sourcemap range of elem
+    /// Trickles up the DOM looking for data-source-line-start/end
+    while (elem) {
+        const start = elem.getAttribute('data-source-line-start');
+        const end = elem.getAttribute('data-source-line-end');
+        if (start && end) {
+            return [start, end];
+        }
+        elem = elem.parentElement;
+    }
+    // Could not find sourcemap range anywhere in ancestors
+    return null;
+}
+
+window.addEventListener('dblclick', async (evt) => {
+    console.log('IFrame got dblclick', findSource(evt.target));
+});
