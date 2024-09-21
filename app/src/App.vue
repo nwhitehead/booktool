@@ -188,7 +188,6 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownTaskListsPlugin)
 .use(markdownMarkPlugin)
 .use(markdownEmojiPlugin)
-//.use(markdownInjectLineNumbers)
 );
 
 function injectSourceMap(token) {
@@ -197,9 +196,6 @@ function injectSourceMap(token) {
     if (token.map) {
         token.attrPush(['data-source-line-start', token.map[0] + 1])
         token.attrPush(['data-source-line-end', token.map.at(-1) + 1])
-    }
-    if (token.type === 'bullet_list_open') {
-        console.log(token);
     }
 }
 
