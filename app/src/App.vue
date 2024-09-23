@@ -104,7 +104,6 @@ async function renderMarkdown(source, format, element) {
     const endRenderTime = performance.now();
     const totalRenderTime = endRenderTime - startRenderTime;
     console.log(`Markdown HTML render took ${totalRenderTime}ms`);
-    console.log(env);
     if (format == 'frontmatter') {
         element.contentWindow.postMessage({
             action: 'update',
