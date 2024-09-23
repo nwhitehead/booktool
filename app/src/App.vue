@@ -57,7 +57,7 @@ import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
 
 // markdown-it plugins
-import { frontmatterPlugin } from '@mdit-vue/plugin-frontmatter';
+import { frontmatterPlugin } from './frontmatterPlugin.js';
 import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
 import markdownAttrsPlugin from 'markdown-it-attrs';
 import markdownContainerPlugin from 'markdown-it-container';
@@ -104,7 +104,7 @@ async function renderMarkdown(source, format, element) {
     const endRenderTime = performance.now();
     const totalRenderTime = endRenderTime - startRenderTime;
     console.log(`Markdown HTML render took ${totalRenderTime}ms`);
-
+    console.log(env);
     if (format == 'frontmatter') {
         element.contentWindow.postMessage({
             action: 'update',
