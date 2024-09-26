@@ -23,6 +23,7 @@
         <button @click="() => outputChoice = 'paged'">Paged</button>
         <button @click="() => outputChoice = 'frontmatter'">Frontmatter</button>
         <button @click="() => outputChoice = 'debug'">Debug</button>
+        <button @click="setSelection">SELECT</button>
         <div class="flex flex-row gap-2 w-full h-50">
             <div class="flex-1 shadow-4 overflow-scroll">
                 <Codemirror
@@ -45,7 +46,7 @@
 
 <script setup>
 
-import { ref, watch, watchEffect, onMounted, onBeforeUnmount } from 'vue';
+import { ref, shallowRef, watch, watchEffect, onMounted, onBeforeUnmount } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
@@ -258,7 +259,7 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
   return defaultRenderLinkOpen(tokens, idx, options, env, self);
 };
 
-const editorObject = ref();
+const editorObject = shallowRef();
 
 let localModelValue = ref(basicExample);
 
@@ -287,6 +288,15 @@ function handleMessage(msg) {
             return;
         }
         console.log(`Switching to range ${payload[0]} - ${payload[1]}`);
+        const view = editorObject.value.view;
+        const state = editorObject.value.state;
+        const srcLine = payload[0];
+        console.log(state.doc.line(srcLine));
+        view.dispatch({
+            selection: {anchor: state.doc.line(srcLine).from},
+            scrollIntoView: true,
+        });
+        view.focus();
     }
 }
 
@@ -297,5 +307,13 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.removeEventListener('message', handleMessage);
 });
+
+function setSelection() {
+    const view = editorObject.value.view;
+    view.dispatch({
+        selection: {anchor: 11}
+    });
+    view.focus();
+}
 
 </script>
