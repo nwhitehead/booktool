@@ -29,7 +29,7 @@
                     v-model="localModelValue"
                     :indent-with-tab="true"
                     :tab-size="4"
-                    :extensions="[minimalSetup, bracketMatching(), markdownLanguage, consoleLightExtension, lineNumbers(), highlightActiveLine(), highlightActiveLineGutter(), EditorState.allowMultipleSelections.of(true), drawSelection(), rectangularSelection(), crosshairCursor()]"
+                    :extensions="codemirrorExtensions"
                     :disabled="false"
                     @update:modelValue="newValue => { localModelValue = newValue; $emit('update:modelValue', newValue); }"
                     @ready="handleReady"
@@ -45,7 +45,7 @@
 
 <script setup>
 
-import { ref, watch, watchEffect } from 'vue';
+import { ref, watch, watchEffect, onMounted, onBeforeUnmount } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
@@ -55,6 +55,20 @@ import { markdownLanguage } from '@codemirror/lang-markdown';
 import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
+
+const codemirrorExtensions = [
+    minimalSetup,
+    bracketMatching(),
+    markdownLanguage,
+    consoleLightExtension,
+    lineNumbers(),
+    highlightActiveLine(),
+    highlightActiveLineGutter(),
+    EditorState.allowMultipleSelections.of(true),
+    drawSelection(),
+    rectangularSelection(),
+    crosshairCursor(),
+];
 
 // markdown-it plugins
 import { frontmatterPlugin } from './frontmatterPlugin.js';
@@ -258,10 +272,30 @@ watchEffect(() => {
 
 watch(iframeLoaded, () => {
     updateView();
+
 });
 
 function handleReady(payload) {
     editorObject.value = payload;
 }
+
+function handleMessage(msg) {
+    const { action, payload } = msg.data;
+    if (action === 'dblclick') {
+        if (payload.length !== 2) {
+            console.warn(`Edit range not right size ${payload}`);
+            return;
+        }
+        console.log(`Switching to range ${payload[0]} - ${payload[1]}`);
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('message', handleMessage);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('message', handleMessage);
+});
 
 </script>

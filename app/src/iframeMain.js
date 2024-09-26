@@ -40,5 +40,10 @@ function findSource(elem) {
 }
 
 window.addEventListener('dblclick', async (evt) => {
-    console.log('IFrame got dblclick', findSource(evt.target));
+    const range = findSource(evt.target);
+    // Communicate back to parent containing iframe
+    window.top.postMessage({
+       action: 'dblclick',
+       payload: range,
+    });
 });
