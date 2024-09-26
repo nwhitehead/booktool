@@ -23,7 +23,6 @@
         <button @click="() => outputChoice = 'paged'">Paged</button>
         <button @click="() => outputChoice = 'frontmatter'">Frontmatter</button>
         <button @click="() => outputChoice = 'debug'">Debug</button>
-        <button @click="setSelection">SELECT</button>
         <div class="flex flex-row gap-2 w-full h-50">
             <div class="flex-1 shadow-4 overflow-scroll">
                 <Codemirror
@@ -32,7 +31,6 @@
                     :tab-size="4"
                     :extensions="codemirrorExtensions"
                     :disabled="false"
-                    @update:modelValue="newValue => { localModelValue = newValue; $emit('update:modelValue', newValue); }"
                     @ready="handleReady"
                 />
             </div>
@@ -259,7 +257,7 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
   return defaultRenderLinkOpen(tokens, idx, options, env, self);
 };
 
-const editorObject = shallowRef();
+const editorView = shallowRef();
 
 let localModelValue = ref(basicExample);
 
@@ -277,21 +275,21 @@ watch(iframeLoaded, () => {
 });
 
 function handleReady(payload) {
-    editorObject.value = payload;
+    // Only .view of payload is valid (others are out of date???)
+    editorView.value = payload.view;
 }
 
 function handleMessage(msg) {
     const { action, payload } = msg.data;
     if (action === 'dblclick') {
-        if (payload.length !== 2) {
-            console.warn(`Edit range not right size ${payload}`);
+        if (!payload || payload.length !== 2) {
+            console.warn(`Edit range not right size payload=${payload}`);
             return;
         }
         console.log(`Switching to range ${payload[0]} - ${payload[1]}`);
-        const view = editorObject.value.view;
-        const state = editorObject.value.state;
+        const view = editorView.value;
+        const state = view.state;
         const srcLine = payload[0];
-        console.log(state.doc.line(srcLine));
         view.dispatch({
             selection: {anchor: state.doc.line(srcLine).from},
             scrollIntoView: true,
@@ -307,13 +305,5 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.removeEventListener('message', handleMessage);
 });
-
-function setSelection() {
-    const view = editorObject.value.view;
-    view.dispatch({
-        selection: {anchor: 11}
-    });
-    view.focus();
-}
 
 </script>
