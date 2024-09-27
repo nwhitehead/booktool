@@ -46,7 +46,7 @@
 
 import { ref, shallowRef, watch, watchEffect, onMounted, onBeforeUnmount } from 'vue';
 import { Codemirror } from 'vue-codemirror';
-import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor } from '@codemirror/view';
+import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor, ViewPlugin } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
 import { minimalSetup  } from 'codemirror';
 import { bracketMatching } from '@codemirror/language';
@@ -54,6 +54,33 @@ import { markdownLanguage } from '@codemirror/lang-markdown';
 import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
+
+const centerCursor = ViewPlugin.fromClass(class {
+  update(update) {
+    if (update.transactions.some(tr => tr.scrollIntoView)) {
+      console.log('centering...');
+      let view = update.view;
+      // (Sync with other DOM read/write phases for efficiency)
+      view.requestMeasure({
+        read() {
+          return {
+            cursor: view.coordsAtPos(view.state.selection.main.head),
+            scroller: view.scrollDOM.getBoundingClientRect()
+          };
+        },
+        write({cursor, scroller}) {
+          if (cursor) {
+            let curMid = (cursor.top + cursor.bottom) / 2;
+            let eltMid = (scroller.top + scroller.bottom) / 2;
+            if (Math.abs(curMid - eltMid) > 5) {
+              view.scrollDOM.scrollTop += curMid - eltMid;
+            }
+          }
+        }
+      });
+    }
+  }
+});
 
 const codemirrorExtensions = [
     minimalSetup,
@@ -67,6 +94,7 @@ const codemirrorExtensions = [
     drawSelection(),
     rectangularSelection(),
     crosshairCursor(),
+    centerCursor,
 ];
 
 // markdown-it plugins
