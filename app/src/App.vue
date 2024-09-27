@@ -55,27 +55,35 @@ import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
 
+function findScrollContainer(node) {
+    while (node.scrollHeight <= node.clientHeight) {
+      node = node.parentNode;
+    }
+    return node;
+}
+
 const centerCursor = ViewPlugin.fromClass(class {
   update(update) {
+    console.log(update.transactions);
     if (update.transactions.some(tr => tr.scrollIntoView)) {
       console.log('centering...');
       let view = update.view;
-      // (Sync with other DOM read/write phases for efficiency)
       view.requestMeasure({
         read() {
-          return {
-            cursor: view.coordsAtPos(view.state.selection.main.head),
-            scroller: view.scrollDOM.getBoundingClientRect()
-          };
+            return {
+                cursor: view.coordsAtPos(view.state.selection.main.head),
+                scroller: findScrollContainer(view.scrollDOM).getBoundingClientRect(),
+            };
         },
         write({cursor, scroller}) {
-          if (cursor) {
-            let curMid = (cursor.top + cursor.bottom) / 2;
-            let eltMid = (scroller.top + scroller.bottom) / 2;
-            if (Math.abs(curMid - eltMid) > 5) {
-              view.scrollDOM.scrollTop += curMid - eltMid;
+            if (cursor) {
+                let curMid = (cursor.top + cursor.bottom) / 2;
+                let eltMid = (scroller.top + scroller.bottom) / 2;
+                if (Math.abs(curMid - eltMid) > 5) {
+                    console.log(`Scrolling to ${curMid - eltMid}`, view.scrollDOM);
+                    findScrollContainer(view.scrollDOM).scrollTop += curMid - eltMid;
+                }
             }
-          }
         }
       });
     }
