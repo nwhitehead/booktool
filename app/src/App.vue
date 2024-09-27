@@ -55,41 +55,6 @@ import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
 
-function findScrollContainer(node) {
-    while (node.scrollHeight <= node.clientHeight) {
-      node = node.parentNode;
-    }
-    return node;
-}
-
-const centerCursor = ViewPlugin.fromClass(class {
-  update(update) {
-    console.log(update.transactions);
-    if (update.transactions.some(tr => tr.scrollIntoView)) {
-      console.log('centering...');
-      let view = update.view;
-      view.requestMeasure({
-        read() {
-            return {
-                cursor: view.coordsAtPos(view.state.selection.main.head),
-                scroller: findScrollContainer(view.scrollDOM).getBoundingClientRect(),
-            };
-        },
-        write({cursor, scroller}) {
-            if (cursor) {
-                let curMid = (cursor.top + cursor.bottom) / 2;
-                let eltMid = (scroller.top + scroller.bottom) / 2;
-                if (Math.abs(curMid - eltMid) > 5) {
-                    console.log(`Scrolling to ${curMid - eltMid}`, view.scrollDOM);
-                    findScrollContainer(view.scrollDOM).scrollTop += curMid - eltMid;
-                }
-            }
-        }
-      });
-    }
-  }
-});
-
 const codemirrorExtensions = [
     minimalSetup,
     bracketMatching(),
@@ -102,7 +67,6 @@ const codemirrorExtensions = [
     drawSelection(),
     rectangularSelection(),
     crosshairCursor(),
-    centerCursor,
 ];
 
 // markdown-it plugins
@@ -315,6 +279,29 @@ function handleReady(payload) {
     editorView.value = payload.view;
 }
 
+/// Find DOM element that actually has scroller
+function findScrollContainer(node) {
+    while (node && node.scrollHeight <= node.clientHeight) {
+      node = node.parentElement;
+    }
+    return node;
+}
+
+/// Given CodeMirror view, center it on the main selection
+function centerView(view) {
+    const cursor = view.coordsAtPos(view.state.selection.main.head);
+    const scrollDOM = findScrollContainer(view.scrollDOM);
+    const scroller = scrollDOM.getBoundingClientRect();
+    if (cursor) {
+        let curMid = (cursor.top + cursor.bottom) / 2;
+        let eltMid = (scroller.top + scroller.bottom) / 2;
+        // Don't change if it's just a few pixels
+        if (Math.abs(curMid - eltMid) > 5) {
+            scrollDOM.scrollTop += curMid - eltMid;
+        }
+    }
+}
+
 function handleMessage(msg) {
     const { action, payload } = msg.data;
     if (action === 'dblclick') {
@@ -331,6 +318,7 @@ function handleMessage(msg) {
             scrollIntoView: true,
         });
         view.focus();
+        centerView(view);
     }
 }
 
