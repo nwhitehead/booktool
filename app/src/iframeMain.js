@@ -19,8 +19,10 @@ window.addEventListener('message', async (msg) => {
         const paged = new Previewer();
         // Create URL to raw string passed here
         // (Other import mechanisms hit HMR which causes problems for Previewer)
-        const cssUrl = URL.createObjectURL((new Blob([payload.css || ''], { type: 'text/css' })));
+        const blob = new Blob([payload.css || ''], { type: 'text/css' });
+        const cssUrl = URL.createObjectURL(blob);
         paged.preview(payload.html || '', [cssUrl], content);
+        console.log(cssUrl);
     }
 });
 

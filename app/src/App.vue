@@ -13,6 +13,14 @@
 .blah {
     background-color: #ff0;
 }
+@font-face {
+    font-family: "Reey";
+    src: url("fonts/Reey.otf") format("opentype");
+}
+
+h1 {
+    font-family: "Reey";
+}
 
 </style>
 
@@ -23,6 +31,7 @@
         <button @click="() => outputChoice = 'paged'">Paged</button>
         <button @click="() => outputChoice = 'frontmatter'">Frontmatter</button>
         <button @click="() => outputChoice = 'debug'">Debug</button>
+        <button @click="generatePDF">PDF</button>
         <div class="flex flex-row gap-2 w-full h-50">
             <div class="flex-1 shadow-4 overflow-scroll">
                 <Codemirror
@@ -54,6 +63,9 @@ import { markdownLanguage } from '@codemirror/lang-markdown';
 import { consoleLightExtension } from './codemirrorLightTheme.js';
 import markdownit from 'markdown-it';
 import DOMPurify from 'dompurify';
+
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const codemirrorExtensions = [
     minimalSetup,
@@ -330,4 +342,38 @@ onBeforeUnmount(() => {
     window.removeEventListener('message', handleMessage);
 });
 
+function generatePDF() {
+    // const jspdf = new jsPDF({
+    //     orientation: 'landscape',
+    //     unit: 'mm',
+    //     format: [140, 100],
+    // });
+    // const pages = markdownOutput.value.contentDocument.getElementsByClassName('pagedjs_page');
+    // jspdf.html(pages[0], {
+    //     html2canvas: {
+    //         scale: 0.25,
+    //     },
+    //     callback: (doc) => {
+    //         doc.save();
+    //     },
+    // });
+    console.log(`generatePDF`);
+
+    const pages = markdownOutput.value.contentDocument.getElementsByClassName('pagedjs_page');
+    const page = pages[0];
+    const w = page.offsetWidth;
+    const h = page.offsetHeight;
+    console.log(`page size is ${w} x ${h}`);
+    html2canvas(page, {
+        dpi: 300,
+        scale: 3,
+    }).then((canvas) => {
+        console.log('rendered', canvas);
+        var img = canvas.toDataURL("image/jpeg", 1);
+        console.log(`img = ${img}`);
+        var doc = new jsPDF('l', 'px', [w, h]);
+        doc.addImage(img, 'JPEG', 0, 0, w, h);
+        doc.save('sample-file.pdf');
+    });
+}
 </script>
