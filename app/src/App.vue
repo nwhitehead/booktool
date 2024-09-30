@@ -343,20 +343,6 @@ onBeforeUnmount(() => {
 });
 
 function generatePDF() {
-    // const jspdf = new jsPDF({
-    //     orientation: 'landscape',
-    //     unit: 'mm',
-    //     format: [140, 100],
-    // });
-    // const pages = markdownOutput.value.contentDocument.getElementsByClassName('pagedjs_page');
-    // jspdf.html(pages[0], {
-    //     html2canvas: {
-    //         scale: 0.25,
-    //     },
-    //     callback: (doc) => {
-    //         doc.save();
-    //     },
-    // });
     console.log(`generatePDF`);
 
     const pages = markdownOutput.value.contentDocument.getElementsByClassName('pagedjs_page');
@@ -364,16 +350,30 @@ function generatePDF() {
     const w = page.offsetWidth;
     const h = page.offsetHeight;
     console.log(`page size is ${w} x ${h}`);
-    html2canvas(page, {
-        dpi: 300,
-        scale: 3,
-    }).then((canvas) => {
-        console.log('rendered', canvas);
-        var img = canvas.toDataURL("image/jpeg", 1);
-        console.log(`img = ${img}`);
-        var doc = new jsPDF('l', 'px', [w, h]);
-        doc.addImage(img, 'JPEG', 0, 0, w, h);
-        doc.save('sample-file.pdf');
+
+    // html2canvas(page, {
+    //     dpi: 300,
+    //     scale: 3,
+    // }).then((canvas) => {
+    //     console.log('rendered', canvas);
+    //     var img = canvas.toDataURL("image/jpeg", 1);
+    //     console.log(`img = ${img}`);
+    //     var doc = new jsPDF('l', 'px', [w, h]);
+    //     doc.addImage(img, 'JPEG', 0, 0, w, h);
+    //     doc.save('sample-file.pdf');
+    // });
+    const jspdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'pt',
+        format: [w, h],
+    });
+    jspdf.html(pages[0], {
+        html2canvas: {
+            // scale: 0.25,
+        },
+        callback: (doc) => {
+            doc.save();
+        },
     });
 }
 </script>
