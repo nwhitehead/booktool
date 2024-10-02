@@ -1,4 +1,6 @@
 app/node_modules/
+oldapp/node_modules/
 dist/
 website/public/
 website/.hugo_build.lock
+.vscode
