@@ -1,8 +1,0 @@
-
-# List available commands
-default:
-    just --list
-
-# Start app
-start:
-    deno run --allow-all --unstable-ffi --allow-ffi denotest.js

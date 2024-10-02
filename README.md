@@ -2,7 +2,7 @@
 
 This is a standalone webapp for creating books.
 
-Idea is you write your book in Markdown, the app converts it to PDF.
+Idea is you write your book in Markdown, the app converts it to PDF and epub.
 
 ## References
 
@@ -22,11 +22,26 @@ Markdown for slides open source system:
 
 * https://marp.app/
 
-Converting HTML to PDF:
+## Architecture
 
-* https://github.com/parallax/jsPDF
+Unfortunately generating PDF from JS in the frontend is not reliable enough. I
+tried to use paged.js with tools such as jsPDF but it is not adequate to the
+task. Need puppeteer to do headless chrome to be consistent with PDF generation
+from HTML.
 
-## Tasks
+Basic architecture is the application is a local-only app that is an `electron`
+app. There is a `node` server that serves up `Vue` UI pages. The server can do
+`puppeteer` calls to a headless chrome to generate the actual PDF as needed
+locally. This way the UI can be consistent with webtech, no book data leaks to
+any external servers, and local files are easy to use.
+
+## Organization
+
+Subirectories:
+* `app` - Contains local application as an electron/Vue app
+* `website` - Content for website as `hugo` site
+
+## Things to do
 
 [ ] CodeMirror editor working on Markdown
 [ ] Markdown rendering to HTML
@@ -57,6 +72,6 @@ Converting HTML to PDF:
 This project uses the following services:
 * [Namecheap](https://www.namecheap.com/) for `shimmermathlabs.com` domain registration.
 * [Vultr](https://www.vultr.com/) for web server hosting
-* [Supabase](https://supabase.com/) for backend database hosting
+<!-- * [Supabase](https://supabase.com/) for backend database hosting -->
 
 And of course this project uses *lots* of NPM packages, including `markdown-it` and plugins, and `pagedjs`.
