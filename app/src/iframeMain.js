@@ -8,7 +8,7 @@ const content = document.getElementById('content');
 
 window.addEventListener('message', async (msg) => {
     const { action, payload } = msg.data;
-    console.log(`Received action=${action}`);
+    console.log(`(3) Received action=${action}`);
     if (action == 'update') {
         // Remove any inserted styles
         document.querySelectorAll('[data-pagedjs-inserted-styles=true]').forEach(elem => elem.remove());
@@ -21,8 +21,8 @@ window.addEventListener('message', async (msg) => {
         // (Other import mechanisms hit HMR which causes problems for Previewer)
         const blob = new Blob([payload.css || ''], { type: 'text/css' });
         const cssUrl = URL.createObjectURL(blob);
-        paged.preview(payload.html || '', [cssUrl], content);
-        console.log(cssUrl);
+        await paged.preview(payload.html || '', [cssUrl], content);
+        //console.log('html is', content.innerHTML);
     }
 });
 
