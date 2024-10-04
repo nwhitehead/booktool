@@ -1,5 +1,6 @@
-<script setup>
+<script setup lang="ts">
 console.log('Hi from App.vue');
+const x: number = 5;
 
 </script>
 
