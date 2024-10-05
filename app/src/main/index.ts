@@ -14,6 +14,11 @@ async function screenshot() {
     await browser.close();
 }
 
+function handleSetTitle(event, title) {
+    const contents = event.sender;
+    const win = BrowserWindow.fromWebContents(contents);
+    win?.setTitle(title);
+}
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -37,6 +42,7 @@ const createWindow = () => {
 }
 
 app.whenReady().then(async () => {
+    ipcMain.on('set-title', handleSetTitle);
     createWindow();
     await screenshot();
     console.log('Created PDF');
