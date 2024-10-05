@@ -1,7 +1,14 @@
 "use strict";
-const { app, BrowserWindow } = require("electron");
-const { join } = require("path");
-const { is } = require("@electron-toolkit/utils");
+const electron = require("electron");
+const path = require("path");
+const is = {
+  dev: !electron.app.isPackaged
+};
+({
+  isWindows: process.platform === "win32",
+  isMacOS: process.platform === "darwin",
+  isLinux: process.platform === "linux"
+});
 const puppeteer = require("puppeteer");
 async function screenshot() {
   const browser = await puppeteer.launch();
@@ -11,23 +18,23 @@ async function screenshot() {
   await browser.close();
 }
 const createWindow = () => {
-  const win = new BrowserWindow({
+  const win = new electron.BrowserWindow({
     width: 800,
     height: 600,
     autoHideMenuBar: true,
     // ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, "../preload/index.js"),
+      preload: path.join(__dirname, "../preload/index.js"),
       sandbox: false
     }
   });
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
     win.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
-    win.loadFile(join(__dirname, "../renderer/index.html"));
+    win.loadFile(path.join(__dirname, "../renderer/index.html"));
   }
 };
-app.whenReady().then(async () => {
+electron.app.whenReady().then(async () => {
   createWindow();
   await screenshot();
   console.log("Created PDF");

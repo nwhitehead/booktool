@@ -1,9 +1,7 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const { join } = require('path');
-const { is } = require('@electron-toolkit/utils');
-//import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
-//import { join } from 'path';
+import { app, BrowserWindow, ipcMain } from 'electron';
+import { join } from 'path';
+import { is } from '@electron-toolkit/utils';
 
 const puppeteer = require('puppeteer');
 
