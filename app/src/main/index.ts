@@ -15,9 +15,22 @@ async function screenshot() {
 }
 
 function handleSetTitle(event, title) {
+    console.log('Setting title');
     const contents = event.sender;
     const win = BrowserWindow.fromWebContents(contents);
     win?.setTitle(title);
+}
+
+async function handleGeneratePDF(event, contents) {
+    console.log('Generating PDF');
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto("https://example.com");
+    //await page.screenshot({ path: "example.png" });
+    await page.pdf({ path: "example_electron.pdf" });
+    await browser.close();
+    console.log('Done generating PDF');
+    return 'thepdf';
 }
 
 const createWindow = () => {
@@ -43,7 +56,6 @@ const createWindow = () => {
 
 app.whenReady().then(async () => {
     ipcMain.on('set-title', handleSetTitle);
+    ipcMain.handle('generatePDF', handleGeneratePDF);
     createWindow();
-    await screenshot();
-    console.log('Created PDF');
 });
