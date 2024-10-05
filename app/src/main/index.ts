@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const { join } = require('path');
 const { is } = require('@electron-toolkit/utils');
 //import { electronApp, optimizer, is } from '@electron-toolkit/utils'
