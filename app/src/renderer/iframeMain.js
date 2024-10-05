@@ -2,7 +2,7 @@
 import { Previewer } from 'pagedjs';
 
 // Make sure math works
-import '/node_modules/katex/dist/katex.min.css';
+import 'katex/dist/katex.min.css';
 
 const content = document.getElementById('content');
 
