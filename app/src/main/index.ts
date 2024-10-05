@@ -3,7 +3,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { is } from '@electron-toolkit/utils';
 
-const puppeteer = require('puppeteer');
+import puppeteer from 'puppeteer';
 
 async function screenshot() {
     const browser = await puppeteer.launch();

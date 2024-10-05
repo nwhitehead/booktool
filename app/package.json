@@ -10,14 +10,12 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "@electron-toolkit/utils": "^3.0.0",
     "@vitejs/plugin-vue": "^5.1.4",
     "electron": "^32.1.2",
     "electron-builder": "^25.1.7",
-    "puppeteer": "^23.5.0"
-  },
-  "dependencies": {
+    "puppeteer": "^23.5.0",
     "@codemirror/lang-markdown": "^6.3.0",
     "@vscode/markdown-it-katex": "^1.1.0",
     "codemirror": "^6.0.1",
