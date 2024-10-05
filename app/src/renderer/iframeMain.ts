@@ -1,4 +1,4 @@
-// iframeMain.js
+// iframeMain.ts
 import { Previewer } from 'pagedjs';
 
 // Make sure math works
