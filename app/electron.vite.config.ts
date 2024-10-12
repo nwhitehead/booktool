@@ -8,6 +8,9 @@ export default defineConfig({
         plugins: [
             externalizeDepsPlugin(),
         ],
+        build: {
+            sourcemap: true,
+        },
     },
     preload: {
         plugins: [

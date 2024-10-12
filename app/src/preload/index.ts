@@ -9,4 +9,5 @@ contextBridge.exposeInMainWorld('versions', {
 contextBridge.exposeInMainWorld('electronAPI', {
     setTitle: (title) => ipcRenderer.send('set-title', title),
     generatePDF: (contents) => ipcRenderer.invoke('generatePDF', contents),
+    render: (payload) => ipcRenderer.invoke('render', payload),
 });
