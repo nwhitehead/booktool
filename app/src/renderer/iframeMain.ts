@@ -9,12 +9,14 @@ const content = document.getElementById('content');
 window.addEventListener('message', async (msg) => {
     const { action, payload } = msg.data;
     console.log(`Received action=${action}`);
+    if (content === null) {
+        return;
+    }
     if (action == 'update') {
         // Remove any inserted styles
         document.querySelectorAll('[data-pagedjs-inserted-styles=true]').forEach(elem => elem.remove());
         content.innerHTML = payload.html;
-    }
-    if (action == 'paged') {
+    } else if (action == 'paged') {
         content.innerHTML = '';
         const paged = new Previewer();
         // Create URL to raw string passed here

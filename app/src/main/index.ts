@@ -5,15 +5,6 @@ import { is } from '@electron-toolkit/utils';
 
 import puppeteer from 'puppeteer';
 
-async function screenshot() {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto("https://example.com");
-    //await page.screenshot({ path: "example.png" });
-    await page.pdf({ path: "example_electron.pdf" });
-    await browser.close();
-}
-
 function handleSetTitle(event, title) {
     console.log('Setting title');
     const contents = event.sender;
@@ -27,7 +18,7 @@ async function handleGeneratePDF(event, contents) {
     const page = await browser.newPage();
     await page.goto("https://example.com");
     //await page.screenshot({ path: "example.png" });
-    await page.pdf({ path: "example_electron.pdf" });
+    await page.pdf({ path: "dist/example_electron.pdf" });
     await browser.close();
     console.log('Done generating PDF');
     return 'thepdf';
