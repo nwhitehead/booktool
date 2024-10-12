@@ -232,9 +232,9 @@ onBeforeUnmount(() => {
 });
 
 async function generatePDF() {
-    const doc = markdownOutput.value.contentDocument.body.innerHTML;
-    console.log(`doc=${doc}`);
-    // const result = await electronAPI.generatePDF();
-    // console.log(`result=${result}`);
+    // const doc = markdownOutput.value.contentDocument.body.innerHTML;
+    // console.log(`doc=${doc}`);
+    const result = await electronAPI.render({ source: localModelValue.value });
+    console.log(`result=${JSON.stringify(result, null, 2)}`);
 }
 </script>

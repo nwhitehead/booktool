@@ -4,6 +4,7 @@ import { join } from 'path';
 import { is } from '@electron-toolkit/utils';
 
 import markdownit from 'markdown-it';
+import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 
 // markdown-it plugins
@@ -117,8 +118,18 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
 
 async function handleRender(event, payload) {
     console.log(`handleRender`);
-    // const output = DOMPurify.sanitize(md.render(source || '', env));
-    return { result: 'result'};
+
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    const window = new JSDOM('').window;
+    const purify = DOMPurify(window);
+    let env = {};
+    const startRenderTime = performance.now();
+    const output = purify.sanitize(md.render(payload.source || '', env));
+    const endRenderTime = performance.now();
+    const totalRenderTime = endRenderTime - startRenderTime;
+    console.log(`Markdown HTML render took ${totalRenderTime}ms`);
+    return { html: `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>` };
 }
 
 function handleSetTitle(event, title) {
