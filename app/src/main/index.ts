@@ -116,15 +116,27 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
   return defaultRenderLinkOpen(tokens, idx, options, env, self);
 };
 
-async function handleRender(event, payload) {
-    const source = payload.source || '';
+let purifyCached = null;
+
+async function getPurify() {
+    if (purifyCached) {
+        return purifyCached;
+    }
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
+    purifyCached = purify;
+    return purify;
+}
+
+async function handleRender(event, payload) {
+    const purify = await getPurify();
+    const source = payload.source || '';
+    let debugEnv = { references: {} };
     let env = { references: {} };
     const startRenderTime = performance.now();
-    const debug = md.parse(source, env);
+    const debug = md.parse(source, debugEnv);
     const output = purify.sanitize(md.render(source, env));
     const endRenderTime = performance.now();
     const totalRenderTime = endRenderTime - startRenderTime;
