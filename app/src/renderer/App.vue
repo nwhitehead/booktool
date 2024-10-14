@@ -102,43 +102,40 @@ async function renderMarkdown(source, format, element) {
         console.log('No iframe');
         return;
     }
-    // // Generate sanitized HTML content from markdown source (also extracts frontmatter)
-    // let env = {};
-    // const startRenderTime = performance.now();
-    // const output = DOMPurify.sanitize(md.render(source || '', env));
-    // const endRenderTime = performance.now();
-    // const totalRenderTime = endRenderTime - startRenderTime;
-    // console.log(`Markdown HTML render took ${totalRenderTime}ms`);
-    // if (format == 'frontmatter') {
-    //     element.contentWindow.postMessage({
-    //         action: 'update',
-    //         payload: {
-    //             html: `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>`,
-    //         },
-    //     });
-    // } else if (format == 'html') {
-    //     element.contentWindow.postMessage({
-    //         action: 'update',
-    //         payload: {
-    //             html: output,
-    //         },
-    //     });
-    // } else if (format == 'debug') {
-    //     element.contentWindow.postMessage({
-    //         action: 'update',
-    //         payload: {
-    //             html: `<pre>${JSON.stringify(md.parse(source, { references: {} }), null, 2)}</pre>`,
-    //         },
-    //     });
-    // } else if (format == 'paged') {
-    //     element.contentWindow.postMessage({
-    //         action: 'paged',
-    //         payload: {
-    //             html: output,
-    //             css: bookCssRaw,
-    //         },
-    //     });
-    // }
+
+    // Generate sanitized HTML content from markdown source (also extracts frontmatter)
+    const result = await electronAPI.render({ source: localModelValue.value });
+
+    if (format == 'frontmatter') {
+        element.contentWindow.postMessage({
+            action: 'update',
+            payload: {
+                html: `<pre>${JSON.stringify(result.frontmatter, null, 4)}</pre>`,
+            },
+        });
+    } else if (format == 'html') {
+        element.contentWindow.postMessage({
+            action: 'update',
+            payload: {
+                html: result.html,
+            },
+        });
+    } else if (format == 'debug') {
+        element.contentWindow.postMessage({
+            action: 'update',
+            payload: {
+                html: `<pre>${JSON.stringify(result.debug, null, 4)}</pre>`,
+            },
+        });
+    } else if (format == 'paged') {
+        element.contentWindow.postMessage({
+            action: 'paged',
+            payload: {
+                html: result.html,
+                css: bookCssRaw,
+            },
+        });
+    }
 }
 
 const Theme = EditorView.theme({

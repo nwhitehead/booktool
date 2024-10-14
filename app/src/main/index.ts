@@ -117,19 +117,23 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
 };
 
 async function handleRender(event, payload) {
-    console.log(`handleRender`);
-
+    const source = payload.source || '';
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
-    let env = {};
+    let env = { references: {} };
     const startRenderTime = performance.now();
-    const output = purify.sanitize(md.render(payload.source || '', env));
+    const debug = md.parse(source, env);
+    const output = purify.sanitize(md.render(source, env));
     const endRenderTime = performance.now();
     const totalRenderTime = endRenderTime - startRenderTime;
     console.log(`Markdown HTML render took ${totalRenderTime}ms`);
-    return { html: `<pre>${JSON.stringify(env.frontmatter, null, 4)}</pre>` };
+    return {
+        frontmatter: env.frontmatter,
+        debug: debug,
+        html: output,
+    };
 }
 
 function handleSetTitle(event, title) {
