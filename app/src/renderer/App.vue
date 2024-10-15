@@ -43,9 +43,8 @@ h1 {
                     @ready="handleReady"
                 />
             </div>
-            <div class="flex-1 shadow-4">
-                <iframe ref="markdownOutput" class="border-none" width="100%" height="100%" :src="iframeHtmlUrl" @load="handleIframeLoad">
-                </iframe>
+            <div class="flex-1 shadow-4 overflow-scroll p-4">
+                <div ref="markdownOutput" class="border-none" width="100%" height="100%" @dblclick="handleDoubleClick" />
             </div>
         </div>
     </section>
@@ -53,7 +52,7 @@ h1 {
 
 <script setup>
 
-import { ref, shallowRef, watch, watchEffect, onMounted, onBeforeUnmount } from 'vue';
+import { ref, shallowRef, watchEffect, onMounted, onBeforeUnmount } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor, ViewPlugin } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
@@ -76,37 +75,22 @@ const codemirrorExtensions = [
     crosshairCursor(),
 ];
 
-
 import basicExample from './test/basic.md?raw';
 import bookCssRaw from './test/book.css?raw';
 
+import 'katex/dist/katex.min.css';
 import 'primeflex/primeflex.css';
 import 'primeflex/themes/primeone-light.css';
 import 'github-markdown-css/github-markdown.css';
-
-import iframeHtmlUrl from './iframe.html?url';
-import iframeTsUrl from './iframeMain.ts?url';
 
 const outputChoice = ref('html');
 
 // DOM element references
 const markdownOutput = ref(null);
-const iframeLoaded = ref(false);
-
-function handleIframeLoad() {
-    iframeLoaded.value = true;
-    console.log(markdownOutput.value.contentDocument.body);
-    console.log(`iframeUrl=${iframeTsUrl}`);
-}
 
 async function renderMarkdown(source, format, element) {
     if (!element) {
         console.log('No element to render to');
-        return;
-    }
-    const iframe = element.contentDocument;
-    if (!iframe || !iframe.body) {
-        console.log('No iframe');
         return;
     }
 
@@ -114,34 +98,13 @@ async function renderMarkdown(source, format, element) {
     const result = await electronAPI.render({ source: localModelValue.value });
 
     if (format == 'frontmatter') {
-        element.contentWindow.postMessage({
-            action: 'update',
-            payload: {
-                html: `<pre>${JSON.stringify(result.frontmatter, null, 4)}</pre>`,
-            },
-        });
+        element.innerHTML = `<pre>${JSON.stringify(result.frontmatter, null, 4)}</pre>`;
     } else if (format == 'html') {
-        element.contentWindow.postMessage({
-            action: 'update',
-            payload: {
-                html: result.html,
-            },
-        });
+        element.innerHTML = result.html;
     } else if (format == 'debug') {
-        element.contentWindow.postMessage({
-            action: 'update',
-            payload: {
-                html: `<pre>${JSON.stringify(result.debug, null, 4)}</pre>`,
-            },
-        });
+        element.innerHTML = `<pre>${JSON.stringify(result.debug, null, 4)}</pre>`;
     } else if (format == 'paged') {
-        element.contentWindow.postMessage({
-            action: 'paged',
-            payload: {
-                html: result.html,
-                css: bookCssRaw,
-            },
-        });
+        element.innerHTML = result.html;
     }
 }
 
@@ -171,12 +134,10 @@ function updateView() {
     renderMarkdown(localModelValue.value, outputChoice.value, markdownOutput.value);
 }
 
-watchEffect(() => {
-    updateView();
-});
-
-watch(iframeLoaded, () => {
-    updateView();
+onMounted(() => {
+    watchEffect(() => {
+        updateView();
+    });
 });
 
 function handleReady(payload) {
@@ -207,33 +168,40 @@ function centerView(view) {
     }
 }
 
-function handleMessage(msg) {
-    const { action, payload } = msg.data;
-    if (action === 'dblclick') {
-        if (!payload || payload.length !== 2) {
-            console.warn(`Edit range not right size payload=${payload}`);
-            return;
-        }
-        console.log(`Switching to range ${payload[0]} - ${payload[1]}`);
-        const view = editorView.value;
-        const state = view.state;
-        const srcLine = payload[0];
-        view.dispatch({
-            selection: {anchor: state.doc.line(srcLine).from},
-            scrollIntoView: true,
-        });
-        view.focus();
-        centerView(view);
-    }
+function handleEditorJump(start, end) {
+    console.log(`Switching to range ${start} - ${end}`);
+    const view = editorView.value;
+    const state = view.state;
+    const srcLine = start;
+    view.dispatch({
+        selection: {anchor: state.doc.line(srcLine).from},
+        scrollIntoView: true,
+    });
+    view.focus();
+    centerView(view);
 }
 
-onMounted(() => {
-    window.addEventListener('message', handleMessage);
-});
+function findSource(elem) {
+    /// Find sourcemap range of elem
+    /// Trickles up the DOM looking for data-source-line-start/end
+    while (elem) {
+        const start = elem.getAttribute('data-source-line-start');
+        const end = elem.getAttribute('data-source-line-end');
+        if (start && end) {
+            return [start, end];
+        }
+        elem = elem.parentElement;
+    }
+    // Could not find sourcemap range anywhere in ancestors
+    return null;
+}
 
-onBeforeUnmount(() => {
-    window.removeEventListener('message', handleMessage);
-});
+function handleDoubleClick(evt) {
+    const src = findSource(evt.target);
+    if (src) {
+        handleEditorJump(src[0], src[1]);
+    }
+}
 
 async function generatePDF() {
     // const doc = markdownOutput.value.contentDocument.body.innerHTML;
