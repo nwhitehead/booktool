@@ -59,7 +59,7 @@ import { EditorState } from '@codemirror/state';
 import { minimalSetup  } from 'codemirror';
 import { bracketMatching } from '@codemirror/language';
 import { markdownLanguage } from '@codemirror/lang-markdown';
-import { consoleLightExtension } from './codemirrorLightTheme.js';
+import { consoleLightExtension } from './codemirrorLightTheme.ts';
 
 const codemirrorExtensions = [
     minimalSetup,

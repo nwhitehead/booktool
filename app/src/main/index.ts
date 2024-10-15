@@ -8,11 +8,11 @@ import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 
 // markdown-it plugins
-import { frontmatterPlugin } from './frontmatterPlugin.js';
+import { frontmatterPlugin } from './frontmatterPlugin.ts';
 import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
 import markdownAttrsPlugin from 'markdown-it-attrs';
 import markdownContainerPlugin from 'markdown-it-container';
-// The @vscode/markdown-it-katex plugin seems to have trouble with our built chain, use older syntax for import.
+// The @vscode/markdown-it-katex plugin seems to have trouble with our build chain, use older syntax for import.
 const markdownMathPlugin = require('@vscode/markdown-it-katex').default;
 import markdownDeflistPlugin from 'markdown-it-deflist';
 import markdownFootnotePlugin from 'markdown-it-footnote';
