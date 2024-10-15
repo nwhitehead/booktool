@@ -44,7 +44,7 @@ h1 {
                 />
             </div>
             <div class="flex-1 shadow-4">
-                <iframe ref="markdownOutput" class="border-none" width="100%" height="100%" :src="iframeHtmlUrl" @load="() => { iframeLoaded = true; }">
+                <iframe ref="markdownOutput" class="border-none" width="100%" height="100%" :src="iframeHtmlUrl" @load="handleIframeLoad">
                 </iframe>
             </div>
         </div>
@@ -85,12 +85,19 @@ import 'primeflex/themes/primeone-light.css';
 import 'github-markdown-css/github-markdown.css';
 
 import iframeHtmlUrl from './iframe.html?url';
+import iframeTsUrl from './iframeMain.ts?url';
 
 const outputChoice = ref('html');
 
 // DOM element references
 const markdownOutput = ref(null);
 const iframeLoaded = ref(false);
+
+function handleIframeLoad() {
+    iframeLoaded.value = true;
+    console.log(markdownOutput.value.contentDocument.body);
+    console.log(`iframeUrl=${iframeTsUrl}`);
+}
 
 async function renderMarkdown(source, format, element) {
     if (!element) {
