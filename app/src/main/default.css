@@ -1,11 +1,18 @@
+/*
+CSS styling common to all PDF generation
+*/
+
+/* Demonstration color for title that is low-contrast with white background */
 h1 {
     color: #ff0;
 }
 
+/* Turn off MathML from KaTeX which is there for accessibility, should not be displayed in PDF */
 .katex-mathml {
     display: none;
 }
 
+/* Force colors to match declared colors without browser corrections to avoid low-contrast */
 :root {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

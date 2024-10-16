@@ -153,10 +153,11 @@ async function render(source) {
 
 async function addPageCss(page, absoluteUrl) {
     // Convert absolute URL from build into absolute file path with file:///
+    // Need to add '.', the URL in absoluteUrl is absolute with base out/main/
     const url = new URL('.' + absoluteUrl, import.meta.url);
     const contents = await fs.readFile(url, { encoding: 'utf-8' });
     await page.addStyleTag({
-        content: cssContents,
+        content: contents,
     });
 }
 
@@ -173,16 +174,10 @@ async function handleRender(event, payload) {
     console.log(`Markdown HTML render took ${totalRenderTime}ms`);
     const page = await getPage();
     await page.setContent(output);
-    // Add custom styling to turn off katex-mathml which is there just for accessibility
+    // Add default styling to turn off katex-mathml which is there just for accessibility
     await page.addStyleTag({ content: defaultCss });
-    // Compute URL for file that is compiled katex styles
-    // Need to add '.', the URL in katexUrl is absolute with base out/main/
-    const url = new URL('.' + katexUrl, import.meta.url);
-    console.log(`url=${url}`);
-    const cssContents = await fs.readFile(url, 'utf-8');
-    await page.addStyleTag({
-        content: cssContents,
-    });
+    // Add KaTeX styles to show math properly (includes lots of inlined fonts)
+    await addPageCss(page, katexUrl);
     await page.pdf({ path: "dist/example_title.pdf" });
     return {
         frontmatter: env.frontmatter,
