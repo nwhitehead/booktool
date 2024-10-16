@@ -95,7 +95,7 @@ async function renderMarkdown(source, format, element) {
     }
 
     // Generate sanitized HTML content from markdown source (also extracts frontmatter)
-    const result = await electronAPI.render({ source: localModelValue.value });
+    const result = await electronAPI.render({ target: 'html', source: localModelValue.value });
 
     if (format == 'frontmatter') {
         element.innerHTML = `<pre>${JSON.stringify(result.frontmatter, null, 4)}</pre>`;
@@ -204,9 +204,9 @@ function handleDoubleClick(evt) {
 }
 
 async function generatePDF() {
-    // const doc = markdownOutput.value.contentDocument.body.innerHTML;
-    // console.log(`doc=${doc}`);
-    const result = await electronAPI.render({ source: localModelValue.value });
-    console.log(`result=${JSON.stringify(result, null, 2)}`);
+    const result = await electronAPI.render({ target: 'pdf', source: localModelValue.value });
+    const pdfBlob = new Blob([result], { type: 'application/pdf' });
+    const pdfURL = URL.createObjectURL(pdfBlob);
+    window.open(pdfURL, '_blank');
 }
 </script>

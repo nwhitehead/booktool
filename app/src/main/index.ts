@@ -133,6 +133,8 @@ async function getPurify() {
     return purify;
 }
 
+getPurify();
+
 async function getPage() {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -145,10 +147,16 @@ async function render(source) {
     let env = { references: {} };
     const startRenderTime = performance.now();
     const debug = md.parse(source, debugEnv);
-    const output = purify.sanitize(md.render(source, env));
+    const html = purify.sanitize(md.render(source, env));
+    const frontmatter = env.frontmatter;
     const endRenderTime = performance.now();
     const totalRenderTime = endRenderTime - startRenderTime;
-
+    console.log(`Markdown HTML render took ${totalRenderTime}ms`);
+    return {
+        html,
+        debug,
+        frontmatter,
+    }
 }
 
 async function addPageCss(page, absoluteUrl) {
@@ -162,28 +170,21 @@ async function addPageCss(page, absoluteUrl) {
 }
 
 async function handleRender(event, payload) {
-    const purify = await getPurify();
-    const source = payload.source || '';
-    let debugEnv = { references: {} };
-    let env = { references: {} };
-    const startRenderTime = performance.now();
-    const debug = md.parse(source, debugEnv);
-    const output = purify.sanitize(md.render(source, env));
-    const endRenderTime = performance.now();
-    const totalRenderTime = endRenderTime - startRenderTime;
-    console.log(`Markdown HTML render took ${totalRenderTime}ms`);
-    const page = await getPage();
-    await page.setContent(output);
-    // Add default styling to turn off katex-mathml which is there just for accessibility
-    await page.addStyleTag({ content: defaultCss });
-    // Add KaTeX styles to show math properly (includes lots of inlined fonts)
-    await addPageCss(page, katexUrl);
-    await page.pdf({ path: "dist/example_title.pdf" });
-    return {
-        frontmatter: env.frontmatter,
-        debug: debug,
-        html: output,
-    };
+    const target = payload.target;
+    const source = payload.source;
+    const result = await render(source);
+    if (target === 'html' || target === 'frontmatter') {
+        return result;
+    } else if (target === 'pdf') {
+        const page = await getPage();
+        await page.setContent(result.html);
+        // Add default styling to turn off katex-mathml which is there just for accessibility
+        await page.addStyleTag({ content: defaultCss });
+        // Add KaTeX styles to show math properly (includes lots of inlined fonts)
+        await addPageCss(page, katexUrl);
+        return await page.pdf({ path: 'example.pdf' });
+    }
+    throw `Unknown payload target '${payload.target}`;
 }
 
 function handleSetTitle(event, title) {
@@ -191,18 +192,6 @@ function handleSetTitle(event, title) {
     const contents = event.sender;
     const win = BrowserWindow.fromWebContents(contents);
     win?.setTitle(title);
-}
-
-async function handleGeneratePDF(event, contents) {
-    console.log('Generating PDF');
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto("https://example.com");
-    //await page.screenshot({ path: "example.png" });
-    await page.pdf({ path: "dist/example_electron.pdf" });
-    await browser.close();
-    console.log('Done generating PDF');
-    return 'thepdf';
 }
 
 const createWindow = () => {
@@ -228,7 +217,6 @@ const createWindow = () => {
 
 app.whenReady().then(async () => {
     ipcMain.on('set-title', handleSetTitle);
-    ipcMain.handle('generatePDF', handleGeneratePDF);
     ipcMain.handle('render', handleRender);
     createWindow();
 });
