@@ -1,4 +1,3 @@
-import { resolve } from 'path';
 import vue from '@vitejs/plugin-vue';
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
