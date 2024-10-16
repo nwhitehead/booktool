@@ -15,7 +15,7 @@
 }
 @font-face {
     font-family: "Reey";
-    src: url("fonts/Reey.otf") format("opentype");
+    src: url("/fonts/Reey.otf") format("opentype");
 }
 
 h1 {
