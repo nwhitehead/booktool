@@ -44,7 +44,7 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(frontmatterPlugin, {})
 .use(markdownAttrsPlugin, {})
 .use(markdownBracketedSpansPlugin, {})
-.use(markdownMathPlugin)
+.use(markdownMathPlugin, {})
 .use(markdownDeflistPlugin)
 .use(markdownFootnotePlugin)
 .use(markdownImplicitFiguresPlugin, {
@@ -122,12 +122,28 @@ async function getPurify() {
     if (purifyCached) {
         return purifyCached;
     }
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
     purifyCached = purify;
     return purify;
+}
+
+async function getPage() {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    return page;
+}
+
+async function render(source) {
+    const purify = await getPurify();
+    let debugEnv = { references: {} };
+    let env = { references: {} };
+    const startRenderTime = performance.now();
+    const debug = md.parse(source, debugEnv);
+    const output = purify.sanitize(md.render(source, env));
+    const endRenderTime = performance.now();
+    const totalRenderTime = endRenderTime - startRenderTime;
+
 }
 
 async function handleRender(event, payload) {
@@ -141,6 +157,9 @@ async function handleRender(event, payload) {
     const endRenderTime = performance.now();
     const totalRenderTime = endRenderTime - startRenderTime;
     console.log(`Markdown HTML render took ${totalRenderTime}ms`);
+    const page = await getPage();
+    page.setContent(output);
+    await page.pdf({ path: "dist/example_title.pdf" });
     return {
         frontmatter: env.frontmatter,
         debug: debug,
