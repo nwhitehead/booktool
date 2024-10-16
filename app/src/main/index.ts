@@ -182,7 +182,7 @@ async function handleRender(event, payload) {
         await page.addStyleTag({ content: defaultCss });
         // Add KaTeX styles to show math properly (includes lots of inlined fonts)
         await addPageCss(page, katexUrl);
-        return await page.pdf({ path: 'example.pdf' });
+        return await page.pdf();
     }
     throw `Unknown payload target '${payload.target}`;
 }
