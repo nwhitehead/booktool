@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { is } from '@electron-toolkit/utils';
@@ -27,11 +27,8 @@ import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
 import puppeteer from 'puppeteer';
 
 import katexUrl from 'katex/dist/katex.min.css?url';
-
-// import 'katex/dist/katex.min.css';
-// import 'primeflex/primeflex.css';
-// import 'primeflex/themes/primeone-light.css';
-// import 'github-markdown-css/github-markdown.css';
+import githubMarkdownUrl from 'github-markdown-css/github-markdown.css?url';
+import defaultCss from './default.css?raw';
 
 
 const containerNames = [ 'spoiler', 'warning' ];
@@ -154,6 +151,15 @@ async function render(source) {
 
 }
 
+async function addPageCss(page, absoluteUrl) {
+    // Convert absolute URL from build into absolute file path with file:///
+    const url = new URL('.' + absoluteUrl, import.meta.url);
+    const contents = await fs.readFile(url, { encoding: 'utf-8' });
+    await page.addStyleTag({
+        content: cssContents,
+    });
+}
+
 async function handleRender(event, payload) {
     const purify = await getPurify();
     const source = payload.source || '';
@@ -168,20 +174,12 @@ async function handleRender(event, payload) {
     const page = await getPage();
     await page.setContent(output);
     // Add custom styling to turn off katex-mathml which is there just for accessibility
-    await page.addStyleTag({ content: `
-h1 {
-    color: #f00;
-}
-
-.katex-mathml {
-    display: none;
-}
-`});
+    await page.addStyleTag({ content: defaultCss });
     // Compute URL for file that is compiled katex styles
     // Need to add '.', the URL in katexUrl is absolute with base out/main/
     const url = new URL('.' + katexUrl, import.meta.url);
     console.log(`url=${url}`);
-    const cssContents = fs.readFileSync(url, 'utf-8');
+    const cssContents = await fs.readFile(url, 'utf-8');
     await page.addStyleTag({
         content: cssContents,
     });

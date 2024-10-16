@@ -1,0 +1,12 @@
+h1 {
+    color: #ff0;
+}
+
+.katex-mathml {
+    display: none;
+}
+
+:root {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
