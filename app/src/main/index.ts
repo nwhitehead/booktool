@@ -203,7 +203,14 @@ async function handleRender(event, payload) {
         // await page.waitForNavigation({
         //     timeout: 2000,
         // });
-        return await page.pdf();
+        const pagesize = await page.evaluate(() => {
+            return globalThis.pagesize;
+        });
+        console.log(`pagesize = ${pagesize}`);
+        return await page.pdf({
+            width: `${pagesize[0]}px`,
+            height: `${pagesize[1]}px`,
+        });
     }
     throw `Unknown payload target '${payload.target}`;
 }
