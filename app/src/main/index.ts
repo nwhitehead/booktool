@@ -199,10 +199,8 @@ async function handleRender(event, payload) {
         // Wait for js to finish and everything to load
         console.log('Starting wait for idle');
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        // await page.waitForNavigation({
-        //     timeout: 2000,
-        // });
+        // await new Promise(resolve => setTimeout(resolve, 2000));
+        await page.waitForNetworkIdle({ });
         const pagesize = await page.evaluate(() => {
             return globalThis.pagesize;
         });
