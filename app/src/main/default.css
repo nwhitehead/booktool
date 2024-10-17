@@ -20,6 +20,7 @@ h1 {
 
 @media print {
     @page {
-        size: A5;
+        size: 180mm 200mm;
+        /* size: A4; */
     }
 }
