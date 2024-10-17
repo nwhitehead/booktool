@@ -182,6 +182,10 @@ async function handleRender(event, payload) {
         await page.addStyleTag({ content: defaultCss });
         // Add KaTeX styles to show math properly (includes lots of inlined fonts)
         await addPageCss(page, katexUrl);
+        // Add pagedjs polyfill
+        await page.addScriptTag({
+            url: 'https://unpkg.com/pagedjs/dist/paged.polyfill.js',
+        });
         return await page.pdf();
     }
     throw `Unknown payload target '${payload.target}`;
