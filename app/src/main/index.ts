@@ -29,10 +29,8 @@ import puppeteer from 'puppeteer';
 import katexUrl from 'katex/dist/katex.min.css?url';
 import githubMarkdownUrl from 'github-markdown-css/github-markdown.css?url';
 import defaultCssRaw from './pager/default.css?raw';
-import pagedjsRaw from '../../node_modules/pagedjs/dist/paged.min.js?raw'; // WORKS but ugly
+import pagedjsRaw from '../../node_modules/pagedjs/dist/paged.min.js?raw';
 import pagerScriptRaw from './pager/script.js?raw';
-import pdfPageRaw from './pager/index.html?raw';
-import pdfPageUrl from './pager/index.html?url';
 
 const containerNames = [ 'spoiler', 'warning' ];
 
@@ -188,17 +186,18 @@ async function handleRender(event, payload) {
             .on('pageerror', ({ message }) => console.log(`[PDF] ${message}`))
             .on('response', response => console.log(`[PDF] ${response.status()} ${response.url().substring(0, MAX_URL_LENGTH)}`))
             .on('requestfailed', request => console.log(`[PDF] ${request.failure().errorText} ${request.url().substring(0, MAX_URL_LENGTH)}`));
-        console.log(pdfPageRaw);
-        // await page.setContent(result.html);
-        await page.setContent(pdfPageRaw);
+        await page.setContent(result.html);
         // Add default styling to turn off katex-mathml which is there just for accessibility
         await page.addStyleTag({ content: defaultCssRaw });
-        // // Add KaTeX styles to show math properly (includes lots of inlined fonts)
+        // Add KaTeX styles to show math properly (includes lots of inlined fonts)
         await addPageCss(page, katexUrl);
+        // Add paged.js package
+        await page.addScriptTag({ content: pagedjsRaw });
+        // Add local script that does page call
+        await page.addScriptTag({ content: pagerScriptRaw });
+
         // Wait for js to finish and everything to load
         console.log('Starting wait for idle');
-
-        console.log(`pdfPageUrl=${pdfPageUrl}`);
 
         await new Promise(resolve => setTimeout(resolve, 2000));
         // await page.waitForNavigation({
