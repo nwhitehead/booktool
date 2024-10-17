@@ -28,11 +28,9 @@ import puppeteer from 'puppeteer';
 
 import katexUrl from 'katex/dist/katex.min.css?url';
 import githubMarkdownUrl from 'github-markdown-css/github-markdown.css?url';
-import defaultCssRaw from './default.css?raw';
+import defaultCssRaw from './pager/default.css?raw';
 import pagedjsRaw from '../../node_modules/pagedjs/dist/paged.polyfill.min.js?raw'; // WORKS but ugly
-
-import pagerScriptUrl from './pager.ts?url';
-//import pdfUrl from '../renderer/pdf.html?url';
+import pagerScriptRaw from './pager/script.js?raw';
 
 const containerNames = [ 'spoiler', 'warning' ];
 
@@ -172,6 +170,8 @@ async function addPageCss(page, absoluteUrl) {
     });
 }
 
+const MAX_URL_LENGTH: number = 50;
+
 async function handleRender(event, payload) {
     const target = payload.target;
     const source = payload.source;
@@ -182,31 +182,31 @@ async function handleRender(event, payload) {
         const page = await getPage();
 
         // Register handlers for debugging
-        page.on('console', message => console.log(`${message.type().substring(0, 3).toUpperCase()} ${message.text()}`))
-            .on('pageerror', ({ message }) => console.log(message))
-            .on('response', response => console.log(`${response.status()} ${response.url().substring(0, 50)}`))
-            .on('requestfailed', request => console.log(`${request.failure().errorText} {request.url()}`));
-        // await page.goto(pdfUrl);
-        const url = new URL('../renderer/pdf.html', import.meta.url);
-        await page.goto(url);
-        // await page.setContent(result.html);
+        page.on('console', message => console.log(`[PDF] ${message.type().substring(0, 3).toUpperCase()} ${message.text()}`))
+            .on('pageerror', ({ message }) => console.log(`[PDF] ${message}`))
+            .on('response', response => console.log(`[PDF] ${response.status()} ${response.url().substring(0, MAX_URL_LENGTH)}`))
+            .on('requestfailed', request => console.log(`[PDF] ${request.failure().errorText} ${request.url().substring(0, MAX_URL_LENGTH)}`));
+        await page.setContent(result.html);
         // Add default styling to turn off katex-mathml which is there just for accessibility
-        // await page.addStyleTag({ content: defaultCssRaw });
+        await page.addStyleTag({ content: defaultCssRaw });
         // // Add KaTeX styles to show math properly (includes lots of inlined fonts)
-        // await addPageCss(page, katexUrl);
+        await addPageCss(page, katexUrl);
         // // Add pagedjs polyfill
-//         await page.addScriptTag({
-// // Uncomment to verify that pagedjs is working same as public unpkg version
-// //            url: 'https://unpkg.com/pagedjs/dist/paged.polyfill.js',
-//             content: pagedjsRaw,
-//         });
+        await page.addScriptTag({
+            // Uncomment to verify that pagedjs is working same as public unpkg version
+            // url: 'https://unpkg.com/pagedjs/dist/paged.polyfill.js',
+            content: pagedjsRaw,
+        });
+        // Add custom js code
+        await page.addScriptTag({
+            content: pagerScriptRaw,
+        });
         // Wait for js to finish and everything to load
         console.log('Starting wait for idle');
         await new Promise(resolve => setTimeout(resolve, 2000));
         // await page.waitForNavigation({
         //     timeout: 2000,
         // });
-        // console.log(`pdfUrl=${pdfUrl}`);
         return await page.pdf();
     }
     throw `Unknown payload target '${payload.target}`;
