@@ -202,7 +202,7 @@ async function handleRender(event, payload) {
         // await new Promise(resolve => setTimeout(resolve, 2000));
         await page.waitForNetworkIdle({ });
         const pagesize = await page.evaluate(() => {
-            return globalThis.pagesize;
+            return paginate();
         });
         console.log(`pagesize = ${pagesize}`);
         return await page.pdf({

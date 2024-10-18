@@ -3,14 +3,13 @@
 // Already detects when it is in a browser context and puts in globalThis.
 const { Previewer } = globalThis.PagedModule;
 
-async function main() {
+async function paginate() {
+    // Paginate contents, return page size in pixels
     let paged = new Previewer();
+    // Call with default arguments, just paginates everything and replaces body
     await paged.preview();
+    // Get page size by looking at offsetWidth and height of first page
     const page = document.getElementsByClassName('pagedjs_page')[0];
     console.log(`pagesize = ${page.offsetWidth} x ${page.offsetHeight}`);
-    globalThis.pagesize = [page.offsetWidth, page.offsetHeight];
-    // 794 x 1123 for A4
-    // 680 x 680 for 180mm x 180mm
+    return [page.offsetWidth, page.offsetHeight];
 }
-
-main();
