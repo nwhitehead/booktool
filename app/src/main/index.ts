@@ -136,15 +136,19 @@ async function getPurify() {
 
 getPurify();
 
-let pageCached = null;
-async function getPage() {
-    if (pageCached) {
-        return pageCached;
+let browserCached = null;
+async function getBrowser() {
+    if (browserCached) {
+        return browserCached;
     }
     const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    pageCached = page;
-    return page;
+    browserCached = browser;
+    return browser;
+}
+
+async function getPage() {
+    const browser = await getBrowser();
+    return await browser.newPage();
 }
 
 async function render(source) {
