@@ -136,9 +136,14 @@ async function getPurify() {
 
 getPurify();
 
+let pageCached = null;
 async function getPage() {
+    if (pageCached) {
+        return pageCached;
+    }
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
+    pageCached = page;
     return page;
 }
 
@@ -193,14 +198,9 @@ async function handleRender(event, payload) {
         await addPageCss(page, katexUrl);
         // Add paged.js package
         await page.addScriptTag({ content: pagedjsRaw });
-        // Add local script that does page call
+        // Add local script that defines paginate call
         await page.addScriptTag({ content: pagerScriptRaw });
-
-        // Wait for js to finish and everything to load
-        console.log('Starting wait for idle');
-
-        // await new Promise(resolve => setTimeout(resolve, 2000));
-        await page.waitForNetworkIdle({ });
+        // Call paginate and get returned pagesize
         const pagesize = await page.evaluate(() => {
             return paginate();
         });
