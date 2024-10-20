@@ -4,7 +4,7 @@ CSS styling common to all PDF generation
 
 /* Demonstration color for title that is low-contrast with white background */
 h1 {
-    color: #ff0;
+    color: #f00;
 }
 
 /* Turn off MathML from KaTeX which is there for accessibility, should not be displayed in PDF */
@@ -21,15 +21,33 @@ h1 {
 @media print {
     @page {
         size: 5.5in 8.5in;
+        margin: 10mm;
+        bleed: 10mm;
+        marks: crop;
+        @top-center {
+            content: " ";
+            border-bottom: 0.3mm solid;
+        }
     }
 
-    @page: left {
-        margin-left: 25mm;
-        margin-right: 0mm;
-    }
-
-    @page: right {
-        margin-left: 0mm;
+    @page:right {
+        margin-left: 20mm;
         margin-right: 25mm;
+        @top-right {
+            content: "My title";
+            margin-right: 5mm;
+        }
+        @top-right-corner {
+            content: counter(page);
+        }
     }
+
+    @page:left {
+        margin-left: 25mm;
+        margin-right: 20mm;
+        @top-left-corner {
+            content: counter(page);
+        }
+    }
+
 }
