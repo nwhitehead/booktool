@@ -169,10 +169,14 @@ async function render(source) {
     }
 }
 
-async function addPageCss(page, absoluteUrl) {
+function buildFilePathUrl(absoluteUrl) {
     // Convert absolute URL from build into absolute file path with file:///
     // Need to add '.', the URL in absoluteUrl is absolute with base out/main/
-    const url = new URL('.' + absoluteUrl, import.meta.url);
+    return new URL('.' + absoluteUrl, import.meta.url);
+}
+
+async function addPageCss(page, absoluteUrl) {
+    const url = buildFilePathUrl(absoluteUrl);
     const contents = await fs.readFile(url, { encoding: 'utf-8' });
     await page.addStyleTag({
         content: contents,
@@ -196,18 +200,19 @@ async function handleRender(event, payload) {
             .on('response', response => console.log(`[PDF] ${response.status()} ${response.url().substring(0, MAX_URL_LENGTH)}`))
             .on('requestfailed', request => console.log(`[PDF] ${request.failure().errorText} ${request.url().substring(0, MAX_URL_LENGTH)}`));
         await page.setContent(result.html);
-        // Add default styling to turn off katex-mathml which is there just for accessibility
-        await page.addStyleTag({ content: defaultCssRaw });
         // Add KaTeX styles to show math properly (includes lots of inlined fonts)
         await addPageCss(page, katexUrl);
+        // Add default styling to turn off katex-mathml which is there just for accessibility
+        await page.addStyleTag({ content: defaultCssRaw });
         // Add paged.js package
         await page.addScriptTag({ content: pagedjsRaw });
         // Add local script that defines paginate call
         await page.addScriptTag({ content: pagerScriptRaw });
         // Call paginate and get returned pagesize
-        const pagesize = await page.evaluate(() => {
-            return paginate();
-        });
+        const pagesize = await page.evaluate((cssRaw) => {
+            console.log(`cssRaw=${cssRaw}`);
+            return paginate(cssRaw);
+        }, defaultCssRaw);
         console.log(`pagesize = ${pagesize}`);
         return await page.pdf({
             width: `${pagesize[0]}px`,
