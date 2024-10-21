@@ -33,6 +33,7 @@
     "markdown-it-emoji": "^3.0.0",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-implicit-figures": "^0.12.0",
+    "markdown-it-include": "^2.0.0",
     "markdown-it-mark": "^4.0.0",
     "markdown-it-multimd-table-ext": "^4.2.3",
     "markdown-it-sub": "^2.0.0",

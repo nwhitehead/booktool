@@ -22,6 +22,7 @@ import markdownSubPlugin from 'markdown-it-sub';
 import markdownSupPlugin from 'markdown-it-sup';
 import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
+import markdownIncludePlugin from 'markdown-it-include';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
 
 import puppeteer from 'puppeteer';
@@ -64,6 +65,7 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownSupPlugin)
 .use(markdownTaskListsPlugin)
 .use(markdownMarkPlugin)
+.use(markdownIncludePlugin, '.')
 .use(markdownEmojiPlugin)
 );
 
