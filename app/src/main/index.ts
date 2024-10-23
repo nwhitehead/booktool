@@ -136,6 +136,7 @@ async function getPurify() {
     return purify;
 }
 
+// Start asynchronous call to avoid delay initializing JSDOM and DOMPurify on first call.
 getPurify();
 
 let browserCached = null;
@@ -157,17 +158,18 @@ async function render(source) {
     const purify = await getPurify();
     let debugEnv = { references: {} };
     let env = { references: {} };
-    const startRenderTime = performance.now();
-    const debug = md.parse(source, debugEnv);
-    const html = purify.sanitize(md.render(source, env));
-    const frontmatter = env.frontmatter;
-    const endRenderTime = performance.now();
-    const totalRenderTime = endRenderTime - startRenderTime;
-    console.log(`Markdown HTML render took ${totalRenderTime}ms`);
-    return {
-        html,
-        debug,
-        frontmatter,
+    try {
+        const startRenderTime = performance.now();
+        const debug = md.parse(source, debugEnv);
+        const rendered = md.render(source, env);
+        const html = purify.sanitize(rendered);
+        const frontmatter = env.frontmatter;
+        const endRenderTime = performance.now();
+        const totalRenderTime = endRenderTime - startRenderTime;
+        console.log(`Markdown HTML render took ${totalRenderTime}ms`);
+        return { html, debug, frontmatter }
+    } catch(exception) {
+        return { exception }
     }
 }
 

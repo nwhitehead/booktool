@@ -117,6 +117,18 @@ doesn't have this. Plugins can do some of this.
 One idea is to use `frontmatter` as a way of setting global options. Then maybe
 just need a way to include Markdown from another Markdown file.
 
+Decision is: look for short list of standard entrypoints, `main.md`, `index.md`
+and so on. These can then include other `md` files. The include is with
+`!!!include...!!!` syntax.
+
+CSS styles are set by indicating which CSS files to load from the frontmatter.
+It's hard to include CSS directly from the Markdown text because `paged.js`
+needs the CSS split out.
+
+One final remaining issue is that user might want multiple CSS files for
+different purposes. One might set paper size, another handles code syntax
+highlighting choices, and so on. Ideally you could do multiple frontmatters
+but I don't think that is allowed.
 
 ## Things to do
 

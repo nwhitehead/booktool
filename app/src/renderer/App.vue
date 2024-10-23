@@ -97,14 +97,23 @@ async function renderMarkdown(source, format, element) {
     // Generate sanitized HTML content from markdown source (also extracts frontmatter)
     const result = await electronAPI.render({ target: 'html', source: localModelValue.value });
 
+    if (result.exception) {
+        element.innerHTML = `<span class="exception">${JSON.stringify(result.exception.message, null, 4)}</span>`;
+        return;
+    }
+
     if (format == 'frontmatter') {
         element.innerHTML = `<pre>${JSON.stringify(result.frontmatter, null, 4)}</pre>`;
+        return;
     } else if (format == 'html') {
         element.innerHTML = result.html;
+        return;
     } else if (format == 'debug') {
         element.innerHTML = `<pre>${JSON.stringify(result.debug, null, 4)}</pre>`;
+        return;
     } else if (format == 'paged') {
         element.innerHTML = result.html;
+        return;
     }
 }
 
