@@ -127,8 +127,8 @@ needs the CSS split out.
 
 One final remaining issue is that user might want multiple CSS files for
 different purposes. One might set paper size, another handles code syntax
-highlighting choices, and so on. Ideally you could do multiple frontmatters
-but I don't think that is allowed.
+highlighting choices, and so on. Ideally you could do multiple frontmatters but
+I don't think that is allowed.
 
 ## Things to do
 

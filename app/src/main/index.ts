@@ -65,7 +65,9 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownSupPlugin)
 .use(markdownTaskListsPlugin)
 .use(markdownMarkPlugin)
-.use(markdownIncludePlugin, '.')
+.use(markdownIncludePlugin, {
+    bracesAreOptional: true,
+})
 .use(markdownEmojiPlugin)
 );
 
