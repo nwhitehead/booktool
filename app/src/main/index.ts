@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 
 // markdown-it plugins
-import { frontmatterPlugin } from './frontmatterPlugin.ts';
+import frontmatterPlugin from './frontmatterPlugin.ts';
 import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
 import markdownAttrsPlugin from 'markdown-it-attrs';
 import markdownContainerPlugin from 'markdown-it-container';
@@ -24,6 +24,7 @@ import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
 import markdownIncludePlugin from 'markdown-it-include';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
+import markdownCssIncludePlugin from './cssIncludePlugin.ts';
 
 import puppeteer from 'puppeteer';
 
@@ -65,7 +66,10 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownSupPlugin)
 .use(markdownTaskListsPlugin)
 .use(markdownMarkPlugin)
-.use(markdownIncludePlugin, {
+// .use(markdownIncludePlugin, {
+//     bracesAreOptional: true,
+// })
+.use(markdownCssIncludePlugin, {
     bracesAreOptional: true,
 })
 .use(markdownEmojiPlugin)
@@ -169,7 +173,7 @@ async function render(source) {
         const endRenderTime = performance.now();
         const totalRenderTime = endRenderTime - startRenderTime;
         console.log(`Markdown HTML render took ${totalRenderTime}ms`);
-        return { html, debug, frontmatter }
+        return { html, debug, frontmatter, env }
     } catch(exception) {
         return { exception }
     }

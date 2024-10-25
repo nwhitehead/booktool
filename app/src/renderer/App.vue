@@ -103,7 +103,7 @@ async function renderMarkdown(source, format, element) {
     }
 
     if (format == 'frontmatter') {
-        element.innerHTML = `<pre>${JSON.stringify(result.frontmatter, null, 4)}</pre>`;
+        element.innerHTML = `<pre>${JSON.stringify(result.frontmatter, null, 4)}</pre><pre>${JSON.stringify(result.env, null, 4)}</pre>`;
         return;
     } else if (format == 'html') {
         element.innerHTML = result.html;

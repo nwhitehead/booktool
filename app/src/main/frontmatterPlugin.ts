@@ -1,6 +1,6 @@
 import matter from 'gray-matter';
 
-export const frontmatterPlugin = (
+export default (
     md,
     { grayMatterOptions } = {},
 ) => {
