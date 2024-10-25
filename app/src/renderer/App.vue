@@ -83,6 +83,12 @@ import 'primeflex/primeflex.css';
 import 'primeflex/themes/primeone-light.css';
 import 'github-markdown-css/github-markdown.css';
 
+function addCssStyle(content) {
+    let style = document.createElement('style');
+    style.innerHTML = content;
+    document.getElementsByTagName('head')[0].appendChild(style);
+}
+
 const outputChoice = ref('html');
 
 // DOM element references
@@ -107,6 +113,10 @@ async function renderMarkdown(source, format, element) {
         return;
     } else if (format == 'html') {
         element.innerHTML = result.html;
+        for (const cssContent of result.env.css) {
+            addCssStyle(cssContent);
+        }
+        console.log(result.env.css);
         return;
     } else if (format == 'debug') {
         element.innerHTML = `<pre>${JSON.stringify(result.debug, null, 4)}</pre>`;

@@ -25,6 +25,8 @@ This is `backtick` style.
 
 Hopefully this text is looking legible and easy to edit.
 
+!!!style blah.css!!!
+
 I ~~like~~ love writing in Markdown.
 
 *Italics* are fun. So is **bold**. And the funnest is ***bold italics***.
