@@ -83,6 +83,13 @@ import 'primeflex/primeflex.css';
 import 'primeflex/themes/primeone-light.css';
 import 'github-markdown-css/github-markdown.css';
 
+function removeAllDynamicStyles() {
+    const styles = document.querySelectorAll('[data-dynamic]');
+    for (let style of styles) {
+        style.remove();
+    }
+}
+
 function addCssStyle(content) {
     let style = document.createElement('style');
     style.setAttribute('data-dynamic', '1');
@@ -114,6 +121,9 @@ async function renderMarkdown(source, format, element) {
         return;
     } else if (format == 'html') {
         element.innerHTML = result.html;
+        // Remove any previously added dynamic CSS styles
+        removeAllDynamicStyles();
+        // Now add all css styles from the document, in order
         for (const cssContent of result.env.css) {
             addCssStyle(cssContent);
         }
