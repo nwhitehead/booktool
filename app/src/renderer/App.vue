@@ -44,7 +44,7 @@ h1 {
                 />
             </div>
             <div class="flex-1 shadow-4 overflow-scroll p-4">
-                <div ref="markdownOutput" class="border-none" width="100%" height="100%" @dblclick="handleDoubleClick" />
+                <div ref="markdownOutput" data-css-scope class="border-none" width="100%" height="100%" @dblclick="handleDoubleClick" />
             </div>
         </div>
     </section>
@@ -85,6 +85,7 @@ import 'github-markdown-css/github-markdown.css';
 
 function addCssStyle(content) {
     let style = document.createElement('style');
+    style.setAttribute('data-dynamic', '1');
     style.innerHTML = content;
     document.getElementsByTagName('head')[0].appendChild(style);
 }

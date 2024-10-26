@@ -19,6 +19,7 @@
  */
 import path from 'node:path';
 import fs from 'node:fs';
+import sass from 'sass';
 
 const INCLUDE_RE = /!{3}\s*style(.+?)!{3}/i;
 const BRACES_RE = /\((.+?)\)/i;
@@ -31,7 +32,7 @@ export default (md, options) => {
         throwError: true,
         bracesAreOptional: true,
         notFoundMessage: 'File \'{{FILE}}\' not found.',
-        wrongExtensionMessage: 'File \'{{FILE}}\' does not end with \'.css\''
+        wrongExtensionMessage: 'File \'{{FILE}}\' does not end with \'.css\' or \'.scss\''
     };
 
     if (typeof options === 'string') {
@@ -67,7 +68,7 @@ export default (md, options) => {
                 filePath = path.resolve(rootdir, includePath);
 
                 // check if child file has css extension and exists
-                if (!filePath.endsWith('.css')) {
+                if (!filePath.endsWith('.css') && !filePath.endsWith('.scss')) {
                     // filePath does not have css extension
                     errorMessage = options.wrongExtensionMessage.replace('{{FILE}}', filePath);
                 } else if (!fs.existsSync(filePath)) {
@@ -84,7 +85,8 @@ export default (md, options) => {
             env.cssFiles = env.cssFiles ? env.cssFiles : [];
             env.cssFiles.push(filePath);
             // get content of file
-            cssSrc = fs.readFileSync(filePath, 'utf8');
+            //cssSrc = fs.readFileSync(filePath, 'utf8');
+            cssSrc = sass.compile(filePath).css;
             env.css = env.css ? env.css : [];
             env.css.push(cssSrc);
 
