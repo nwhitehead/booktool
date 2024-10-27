@@ -1,3 +1,5 @@
+import commandLineArguments from 'command-line-args';
+import process from 'node:process';
 import fs from 'node:fs/promises';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
@@ -262,8 +264,19 @@ const createWindow = () => {
     }
 }
 
-app.whenReady().then(async () => {
-    ipcMain.on('set-title', handleSetTitle);
-    ipcMain.handle('render', handleRender);
-    createWindow();
-});
+// Get command-line arguments
+const argv = process.argv;
+const commandLineOptions = [
+    { name: 'nogui', alias: 'i', type: Boolean },
+];
+const options = commandLineArguments(commandLineOptions, { argv });
+if (options.nogui) {
+    console.log('No GUI');
+    app.quit();
+} else {
+    app.whenReady().then(async () => {
+        ipcMain.on('set-title', handleSetTitle);
+        ipcMain.handle('render', handleRender);
+        createWindow();
+    });
+}
