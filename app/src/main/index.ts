@@ -66,11 +66,13 @@ const md = multiuseContainers(containerNames, markdownit({
 .use(markdownSupPlugin)
 .use(markdownTaskListsPlugin)
 .use(markdownMarkPlugin)
-// .use(markdownIncludePlugin, {
-//     bracesAreOptional: true,
-// })
+.use(markdownIncludePlugin, {
+    bracesAreOptional: true,
+    root: './resources',
+})
 .use(markdownCssIncludePlugin, {
     bracesAreOptional: true,
+    root: './resources',
 })
 .use(markdownEmojiPlugin)
 );
