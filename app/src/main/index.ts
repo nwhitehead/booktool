@@ -36,103 +36,114 @@ import defaultCssRaw from './pager/default.css?raw';
 import pagedjsRaw from '../../node_modules/pagedjs/dist/paged.min.js?raw';
 import pagerScriptRaw from './pager/script.js?raw';
 
-const containerNames = [ 'spoiler', 'warning' ];
+let markdownCached = null;
 
-function multiuseContainers(names, md) {
-    for (const name of names) {
-        md = md.use(markdownContainerPlugin, name);
+function getMarkdown() {
+    if (markdownCached) {
+        return markdownCached;
     }
+
+    const containerNames = [ 'spoiler', 'warning' ];
+
+    function multiuseContainers(names, md) {
+        for (const name of names) {
+            md = md.use(markdownContainerPlugin, name);
+        }
+        return md;
+    }
+
+    const md = multiuseContainers(containerNames, markdownit({
+            html: true,
+            breaks: false,
+            linkify: true,
+            quotes: '“”‘’',
+        })
+        .use(frontmatterPlugin, {})
+        .use(markdownAttrsPlugin, {})
+        .use(markdownBracketedSpansPlugin, {})
+        .use(markdownMathPlugin, {})
+        .use(markdownDeflistPlugin)
+        .use(markdownFootnotePlugin)
+        .use(markdownImplicitFiguresPlugin, {
+            figcaption: true,
+            keepAlt: true,
+        })
+        .use(markdownTablesPlugin, {
+            multiline: true,
+        })
+        .use(markdownSubPlugin)
+        .use(markdownSupPlugin)
+        .use(markdownTaskListsPlugin)
+        .use(markdownMarkPlugin)
+        .use(markdownIncludePlugin, {
+            bracesAreOptional: true,
+            root: './resources',
+        })
+        .use(markdownCssIncludePlugin, {
+            bracesAreOptional: true,
+            root: './resources',
+        })
+        .use(markdownEmojiPlugin)
+    );
+
+    function injectSourceMap(token) {
+        // Given a token, add attributes to source range of lines
+        // If there is no map, just ignore
+        if (token.map) {
+            token.attrPush(['data-source-line-start', token.map[0] + 1])
+            token.attrPush(['data-source-line-end', token.map.at(-1) + 1])
+        }
+    }
+
+    // Rule to inject source lines into output
+    // This adds attributes to tokens at rule stage
+    // This is needed for fence blocks, which are transformed during rules phase before rendering
+    function injectLineNumbers(originalFunction) {
+        return (tokens, idx, options, env, slf) => {
+            injectSourceMap(tokens[idx]);
+            return originalFunction(tokens, idx, options, env, slf);
+        }
+    }
+    md.renderer.rules.fence = injectLineNumbers(md.renderer.rules.fence);
+
+    // Inject source lines into all _open style tokens.
+    const originalRenderToken = md.renderer.renderToken.bind(md.renderer);
+    md.renderer.renderToken = function (tokens, idx, options) {
+        const token = tokens[idx];
+        if (token.map !== null && token.type.endsWith('_open')) {
+            injectSourceMap(token);
+        }
+        return originalRenderToken(tokens, idx, options);
+    };
+
+    // Math needs extra work to get sourcemap
+    function generateAttrs(attrs) {
+        const attrStrings = attrs.map((attr) => `${attr[0]}="${attr[1]}"`);
+        return attrStrings.join(' ');
+    }
+
+    const originalMathBlockRenderer = md.renderer.rules.math_block;
+    md.renderer.rules.math_block = function(tokens, idx, options, env, slf) {
+        // Inject sourcemap to attrs
+        injectSourceMap(tokens[idx]);
+        // Now manually generate attrs for wrapping div
+        // Call original katex renderer inside
+        const attrString = generateAttrs(tokens[idx].attrs);
+        return `<div class="katex-block" ${attrString}>${originalMathBlockRenderer(tokens, idx, options, env, slf)}</div>`;
+    };
+
+    // Make links open in new tab
+    var defaultRenderLinkOpen = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
+        return self.renderToken(tokens, idx, options);
+    };
+    md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+        tokens[idx].attrSet('target', '_blank');
+        return defaultRenderLinkOpen(tokens, idx, options, env, self);
+    };
+
+    markdownCached = md;
     return md;
 }
-
-const md = multiuseContainers(containerNames, markdownit({
-    html: true,
-    breaks: false,
-    linkify: true,
-    quotes: '“”‘’',
-})
-.use(frontmatterPlugin, {})
-.use(markdownAttrsPlugin, {})
-.use(markdownBracketedSpansPlugin, {})
-.use(markdownMathPlugin, {})
-.use(markdownDeflistPlugin)
-.use(markdownFootnotePlugin)
-.use(markdownImplicitFiguresPlugin, {
-    figcaption: true,
-    keepAlt: true,
-})
-.use(markdownTablesPlugin, {
-    multiline: true,
-})
-.use(markdownSubPlugin)
-.use(markdownSupPlugin)
-.use(markdownTaskListsPlugin)
-.use(markdownMarkPlugin)
-.use(markdownIncludePlugin, {
-    bracesAreOptional: true,
-    root: './resources',
-})
-.use(markdownCssIncludePlugin, {
-    bracesAreOptional: true,
-    root: './resources',
-})
-.use(markdownEmojiPlugin)
-);
-
-function injectSourceMap(token) {
-    // Given a token, add attributes to source range of lines
-    // If there is no map, just ignore
-    if (token.map) {
-        token.attrPush(['data-source-line-start', token.map[0] + 1])
-        token.attrPush(['data-source-line-end', token.map.at(-1) + 1])
-    }
-}
-
-// Rule to inject source lines into output
-// This adds attributes to tokens at rule stage
-// This is needed for fence blocks, which are transformed during rules phase before rendering
-function injectLineNumbers(originalFunction){
-    return (tokens, idx, options, env, slf) => {
-        injectSourceMap(tokens[idx]);
-        return originalFunction(tokens, idx, options, env, slf);
-    }
-}
-md.renderer.rules.fence = injectLineNumbers(md.renderer.rules.fence);
-
-// Inject source lines into all _open style tokens.
-const originalRenderToken = md.renderer.renderToken.bind(md.renderer);
-md.renderer.renderToken = function (tokens, idx, options) {
-    const token = tokens[idx];
-    if (token.map !== null && token.type.endsWith('_open')) {
-        injectSourceMap(token);
-    }
-    return originalRenderToken(tokens, idx, options);
-};
-
-// Math needs extra work to get sourcemap
-function generateAttrs(attrs) {
-    const attrStrings = attrs.map((attr) => `${attr[0]}="${attr[1]}"`);
-    return attrStrings.join(' ');
-}
-
-const originalMathBlockRenderer = md.renderer.rules.math_block;
-md.renderer.rules.math_block = function(tokens, idx, options, env, slf) {
-    // Inject sourcemap to attrs
-    injectSourceMap(tokens[idx]);
-    // Now manually generate attrs for wrapping div
-    // Call original katex renderer inside
-    const attrString = generateAttrs(tokens[idx].attrs);
-    return `<div class="katex-block" ${attrString}>${originalMathBlockRenderer(tokens, idx, options, env, slf)}</div>`;
-};
-
-// Make links open in new tab
-var defaultRenderLinkOpen = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
-  return self.renderToken(tokens, idx, options);
-};
-md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-  tokens[idx].attrSet('target', '_blank');
-  return defaultRenderLinkOpen(tokens, idx, options, env, self);
-};
 
 let purifyCached = null;
 
@@ -166,6 +177,7 @@ async function getPage() {
 
 async function render(source) {
     const purify = await getPurify();
+    const md = getMarkdown();
     let debugEnv = { references: {} };
     let env = { references: {} };
     try {
@@ -268,10 +280,12 @@ const createWindow = () => {
 const argv = process.argv;
 const commandLineOptions = [
     { name: 'nogui', alias: 'i', type: Boolean },
+    { name: 'root', alias: 'r', type: String },
 ];
 const options = commandLineArguments(commandLineOptions, { argv });
 if (options.nogui) {
     console.log('No GUI');
+    console.log(options);
     app.quit();
 } else {
     app.whenReady().then(async () => {
