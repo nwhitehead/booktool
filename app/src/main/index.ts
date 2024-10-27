@@ -10,7 +10,7 @@ import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 
 // markdown-it plugins
-import frontmatterPlugin from './frontmatterPlugin.ts';
+import frontmatterPlugin from './plugins/frontmatterPlugin.ts';
 import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
 import markdownAttrsPlugin from 'markdown-it-attrs';
 import markdownContainerPlugin from 'markdown-it-container';
@@ -26,7 +26,7 @@ import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
 import markdownIncludePlugin from 'markdown-it-include';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
-import markdownCssIncludePlugin from './cssIncludePlugin.ts';
+import markdownCssIncludePlugin from './plugins/cssIncludePlugin.ts';
 
 import puppeteer from 'puppeteer';
 
