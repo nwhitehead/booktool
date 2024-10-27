@@ -11,12 +11,11 @@ import defaultCssRaw from './pager/default.css?raw';
 import pagedjsRaw from '../../node_modules/pagedjs/dist/paged.min.js?raw';
 import pagerScriptRaw from './pager/script.js?raw';
 
-import { getPurify } from './purify.ts';
+import { sanitize } from './purify.ts';
 import { getPage } from './browser.ts';
 import { getMarkdown } from './render.ts';
 
 async function render(source) {
-    const purify = await getPurify();
     const md = await getMarkdown();
     let debugEnv = { references: {} };
     let env = { references: {} };
@@ -24,7 +23,7 @@ async function render(source) {
         const startRenderTime = performance.now();
         const debug = md.parse(source, debugEnv);
         const rendered = md.render(source, env);
-        const html = purify.sanitize(rendered);
+        const html = await sanitize(rendered);
         const frontmatter = env.frontmatter;
         const endRenderTime = performance.now();
         const totalRenderTime = endRenderTime - startRenderTime;

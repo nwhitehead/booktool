@@ -8,3 +8,8 @@ export async function initPurify() {
 }
 
 export const getPurify = cacheFunction(initPurify);
+
+export async function sanitize(source) {
+    const purify = await getPurify(initPurify);
+    return purify.sanitize(source);
+}
