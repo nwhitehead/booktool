@@ -124,10 +124,12 @@ async function renderMarkdown(source, format, element) {
         // Remove any previously added dynamic CSS styles
         removeAllDynamicStyles();
         // Now add all css styles from the document, in order
-        for (const cssContent of result.env.css) {
-            addCssStyle(cssContent);
-        }
-        console.log(result.env.css);
+        const scopedCssStyles = `
+[data-css-scope] {
+    ${result.env.css.join('\n')}
+}`;
+        addCssStyle(scopedCssStyles);
+        console.log(scopedCssStyles);
         return;
     } else if (format == 'debug') {
         element.innerHTML = `<pre>${JSON.stringify(result.debug, null, 4)}</pre>`;
