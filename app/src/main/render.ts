@@ -1,3 +1,4 @@
+
 import markdownit from 'markdown-it';
 
 // markdown-it plugins
@@ -21,9 +22,18 @@ import markdownCssIncludePlugin from './plugins/cssIncludePlugin.ts';
 
 import { cacheFunction } from './cache.ts';
 
-export function initMarkdown() {
+function defaultValue(x, value) {
+    return x === undefined ? value : x;
+}
 
-    const containerNames = [ 'spoiler', 'warning' ];
+export function initMarkdown(options) {
+    options = defaultValue(options, {});
+    options.container = defaultValue(options.container, {});
+    options.figure = defaultValue(options.figure, {});
+    options.table = defaultValue(options.table, {});
+    options.include = defaultValue(options.include, {});
+
+    const containerNames = defaultValue(options.container.names, [ 'spoiler', 'warning' ]);
 
     function multiuseContainers(names, md) {
         for (const name of names) {
@@ -33,10 +43,10 @@ export function initMarkdown() {
     }
 
     const md = multiuseContainers(containerNames, markdownit({
-            html: true,
-            breaks: false,
-            linkify: true,
-            quotes: '“”‘’',
+            html: defaultValue(options.allowHTML, true),
+            breaks: defaultValue(options.keepBreaks, false),
+            linkify: defaultValue(options.linkify, true),
+            quotes: defaultValue(options.quotes, '“”‘’'),
         })
         .use(frontmatterPlugin, {})
         .use(markdownAttrsPlugin, {})
@@ -45,11 +55,11 @@ export function initMarkdown() {
         .use(markdownDeflistPlugin)
         .use(markdownFootnotePlugin)
         .use(markdownImplicitFiguresPlugin, {
-            figcaption: true,
-            keepAlt: true,
+            figcaption: defaultValue(options.figure.figcaption, true),
+            keepAlt: defaultValue(options.figure.keepAlt, true),
         })
         .use(markdownTablesPlugin, {
-            multiline: true,
+            multiline: defaultValue(options.table.multiline, true),
         })
         .use(markdownSubPlugin)
         .use(markdownSupPlugin)
@@ -57,11 +67,11 @@ export function initMarkdown() {
         .use(markdownMarkPlugin)
         .use(markdownIncludePlugin, {
             bracesAreOptional: true,
-            root: './resources',
+            root: defaultValue(options.include.root, './resources'),
         })
         .use(markdownCssIncludePlugin, {
             bracesAreOptional: true,
-            root: './resources',
+            root: defaultValue(options.include.root, './resources'),
         })
         .use(markdownEmojiPlugin)
     );
