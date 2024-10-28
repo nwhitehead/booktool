@@ -1,6 +1,6 @@
 
+import { join } from 'path';
 import markdownit from 'markdown-it';
-
 // markdown-it plugins
 import frontmatterPlugin from './plugins/frontmatterPlugin.ts';
 import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
@@ -21,6 +21,9 @@ import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
 import markdownCssIncludePlugin from './plugins/cssIncludePlugin.ts';
 
 import { cacheFunction } from './cache.ts';
+
+const rootPath = '.';
+const atRootPath = join(__dirname, '../../resources');
 
 function defaultValue(x, value) {
     return x === undefined ? value : x;
@@ -67,11 +70,12 @@ export function initMarkdown(options) {
         .use(markdownMarkPlugin)
         .use(markdownIncludePlugin, {
             bracesAreOptional: true,
-            root: defaultValue(options.include.root, './resources'),
+            root: defaultValue(options.include.root, rootPath),
         })
         .use(markdownCssIncludePlugin, {
             bracesAreOptional: true,
-            root: defaultValue(options.include.root, './resources'),
+            root: defaultValue(options.include.root, rootPath),
+            atRoot: defaultValue(options.include.root, atRootPath),
         })
         .use(markdownEmojiPlugin)
     );

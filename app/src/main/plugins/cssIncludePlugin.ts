@@ -27,6 +27,7 @@ const BRACES_RE = /\((.+?)\)/i;
 export default (md, options) => {
     const defaultOptions = {
         root: '.',
+        atRoot: '.',
         getRootDir: (pluginOptions/*, state, startLine, endLine*/) => pluginOptions.root,
         includeRe: INCLUDE_RE,
         throwError: true,
@@ -47,7 +48,7 @@ export default (md, options) => {
         };
     }
 
-    const _processStyle = (src, env, rootdir) => {
+    const _processStyle = (src, env, root, atRoot) => {
         let cap, filePath, cssSrc, errorMessage;
 
         while ((cap = options.includeRe.exec(src))) {
@@ -65,8 +66,11 @@ export default (md, options) => {
             }
 
             if (!errorMessage) {
-                filePath = path.resolve(rootdir, includePath);
-
+                if (includePath.startsWith('@/')) {
+                    filePath = path.resolve(atRoot, `./${includePath.slice(2)}`);
+                } else {
+                    filePath = path.resolve(root, includePath);
+                }
                 // check if child file has css extension and exists
                 if (!filePath.endsWith('.css') && !filePath.endsWith('.scss')) {
                     // filePath does not have css extension
@@ -97,7 +101,7 @@ export default (md, options) => {
     };
 
     const _includeFileParts = (state, startLine, endLine/*, silent*/) => {
-        state.src = _processStyle(state.src, state.env, options.getRootDir(options, state, startLine, endLine));
+        state.src = _processStyle(state.src, state.env, options.root, options.atRoot);
     };
 
     md.core.ruler.before('normalize', 'include', _includeFileParts);

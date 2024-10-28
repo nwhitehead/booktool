@@ -25,7 +25,7 @@ This is `backtick` style.
 
 Hopefully this text is looking legible and easy to edit.
 
-!!!style blah.scss!!!
+!!!style @/blah.scss!!!
 
 I ~~like~~ love writing in Markdown.
 
