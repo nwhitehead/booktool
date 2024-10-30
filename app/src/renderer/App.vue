@@ -3,25 +3,17 @@
 //!
 //! A Vue component representing the top level single-page app.
 //!
-<style>
-
-</style>
 <style scoped>
 .h-50 {
     height: 75vh;
-}
-.blah {
-    background-color: #ff0;
 }
 @font-face {
     font-family: "Reey";
     src: url("/fonts/Reey.otf") format("opentype");
 }
-
 h1 {
     font-family: "Reey";
 }
-
 </style>
 
 <template>
@@ -52,7 +44,7 @@ h1 {
 
 <script setup>
 
-import { ref, shallowRef, watchEffect, onMounted, onBeforeUnmount } from 'vue';
+import { ref, shallowRef, watchEffect, onMounted } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { EditorView, lineNumbers, highlightActiveLine, highlightActiveLineGutter, drawSelection, rectangularSelection, crosshairCursor, ViewPlugin } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
@@ -78,7 +70,7 @@ const codemirrorExtensions = [
 import basicExample from './test/basic.md?raw';
 import bookCssRaw from './test/book.css?raw';
 
-import 'katex/dist/katex.min.css';
+//import 'katex/dist/katex.min.css';
 import 'primeflex/primeflex.css';
 import 'primeflex/themes/primeone-light.css';
 import 'github-markdown-css/github-markdown.css';
@@ -123,13 +115,8 @@ async function renderMarkdown(source, format, element) {
         element.innerHTML = result.html;
         // Remove any previously added dynamic CSS styles
         removeAllDynamicStyles();
-        // Now add all css styles from the document, in order
-        const scopedCssStyles = `
-[data-css-scope] {
-    ${result.env.css.join('\n')}
-}`;
-        addCssStyle(scopedCssStyles);
-        console.log(scopedCssStyles);
+        // Add in scoped CSS styles
+        addCssStyle(result.scopedCss);
         return;
     } else if (format == 'debug') {
         element.innerHTML = `<pre>${JSON.stringify(result.debug, null, 4)}</pre>`;

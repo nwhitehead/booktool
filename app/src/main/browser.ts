@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer';
 import { cacheFunction } from './cache.ts';
 
 export async function initBrowser() {
-    await puppeteer.launch();
+    return await puppeteer.launch();
 }
 
 export async function initPage() {

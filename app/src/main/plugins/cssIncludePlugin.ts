@@ -1,25 +1,24 @@
 /**
- * This is a markdown-it plugin for collecting CSS styles from Markdown.
+ * This is a markdown-it plugin for collecting SCSS styles from Markdown.
  *
- * Syntax is: !!!style FILENAME.css!!!
+ * Syntax is: !!!style FILENAME.scss!!!
  *
- * The idea is that you can refer to multiple fragments of CSS. These fragments
+ * The idea is that you can refer to multiple fragments of SCSS. These fragments
  * are read and collected into the markdown-it environment for later processing
- * or rendering. Inline CSS styles are not collected or processed.
- * 
- * Output is in env environment, fields:
- *     cssFiles: array of filenames that were included
- *     css: array of CSS file contents
+ * or rendering. Inline SCSS styles are not collected or processed.
  *
- * Note that CSS files are not processed for recursive includes. The include
- * syntax is for Markdown content only. Included CSS is put into an array of CSS
+ * Output is in env environment, fields:
+ *     scssFiles: array of filenames that were included
+ *     scss: array of SCSS file contents
+ *
+ * Note that SCSS files are not processed here for recursive includes. The include
+ * syntax is for Markdown content only. Included SCSS is put into an array of SCSS
  * styles. If a file is included more than once it will be pushed more than once
- * in the array. Where the CSS is included only matters for ordering of the
+ * in the array. Where the SCSS is included only matters for ordering of the
  * results, it is otherwise location independent.
  */
 import path from 'node:path';
 import fs from 'node:fs';
-import sass from 'sass';
 
 const INCLUDE_RE = /!{3}\s*style(.+?)!{3}/i;
 const BRACES_RE = /\((.+?)\)/i;
@@ -49,7 +48,7 @@ export default (md, options) => {
     }
 
     const _processStyle = (src, env, root, atRoot) => {
-        let cap, filePath, cssSrc, errorMessage;
+        let cap, filePath, scssSrc, errorMessage;
 
         while ((cap = options.includeRe.exec(src))) {
             let includePath = cap[1].trim();
@@ -85,14 +84,13 @@ export default (md, options) => {
             if (errorMessage) {
                 throw new Error(errorMessage);
             }
-            // Record which files are read
-            env.cssFiles = env.cssFiles ? env.cssFiles : [];
-            env.cssFiles.push(filePath);
-            // get content of file
-            //cssSrc = fs.readFileSync(filePath, 'utf8');
-            cssSrc = sass.compile(filePath).css;
-            env.css = env.css ? env.css : [];
-            env.css.push(cssSrc);
+            // record which files are read
+            env.scssFiles = env.scssFiles ? env.scssFiles : [];
+            env.scssFiles.push(filePath);
+            // compile file
+            scssSrc = fs.readFileSync(filePath, { encoding: 'utf-8' });
+            env.scss = env.scss ? env.scss : [];
+            env.scss.push(scssSrc);
 
             // remove include part from source
             src = src.slice(0, cap.index) + src.slice(cap.index + cap[0].length, src.length);

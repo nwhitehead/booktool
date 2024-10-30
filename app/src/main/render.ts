@@ -1,141 +1,85 @@
 
-import { join } from 'path';
-import markdownit from 'markdown-it';
-// markdown-it plugins
-import frontmatterPlugin from './plugins/frontmatterPlugin.ts';
-import markdownBracketedSpansPlugin from 'markdown-it-bracketed-spans';
-import markdownAttrsPlugin from 'markdown-it-attrs';
-import markdownContainerPlugin from 'markdown-it-container';
-// The @vscode/markdown-it-katex plugin seems to have trouble with our build chain, use older syntax for import.
-const markdownMathPlugin = require('@vscode/markdown-it-katex').default;
-import markdownDeflistPlugin from 'markdown-it-deflist';
-import markdownFootnotePlugin from 'markdown-it-footnote';
-import markdownImplicitFiguresPlugin from 'markdown-it-implicit-figures';
-import markdownTablesPlugin from 'markdown-it-multimd-table-ext';
-import markdownSubPlugin from 'markdown-it-sub';
-import markdownSupPlugin from 'markdown-it-sup';
-import markdownTaskListsPlugin from 'markdown-it-task-lists';
-import markdownMarkPlugin from 'markdown-it-mark';
-import markdownIncludePlugin from 'markdown-it-include';
-import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
-import markdownCssIncludePlugin from './plugins/cssIncludePlugin.ts';
+import katexUrl from 'katex/dist/katex.min.css?url';
+import fs from 'node:fs/promises';
+import sass from 'sass';
 
-import { cacheFunction } from './cache.ts';
+import githubMarkdownUrl from 'github-markdown-css/github-markdown.css?url';
+import defaultCssRaw from './pager/default.css?raw';
+import pagedjsRaw from '../../node_modules/pagedjs/dist/paged.min.js?raw';
+import pagerScriptRaw from './pager/script.js?raw';
 
-const rootPath = '.';
-const atRootPath = join(__dirname, '../../resources');
+import { sanitize } from './purify.ts';
+import { getPage } from './browser.ts';
+import { getMarkdown } from './markdown.ts';
 
-function defaultValue(x, value) {
-    return x === undefined ? value : x;
+const MAX_URL_LENGTH: number = 50;
+
+function compile(src, scope?) {
+    const scopedSrc = scope ? `
+        [data-${scope}] {
+            ${src.join('\n')}
+        }` : src.join('\n');
+    return sass.compileString(scopedSrc).css;
 }
 
-export function initMarkdown(options) {
-    options = defaultValue(options, {});
-    options.container = defaultValue(options.container, {});
-    options.figure = defaultValue(options.figure, {});
-    options.table = defaultValue(options.table, {});
-    options.include = defaultValue(options.include, {});
-
-    const containerNames = defaultValue(options.container.names, [ 'spoiler', 'warning' ]);
-
-    function multiuseContainers(names, md) {
-        for (const name of names) {
-            md = md.use(markdownContainerPlugin, name);
-        }
-        return md;
+export async function render(source) {
+    const md = await getMarkdown();
+    let debugEnv = { references: {} };
+    let env = { references: {}, frontmatter: {}, scss: [] };
+    try {
+        const startRenderTime = performance.now();
+        const debug = md.parse(source, debugEnv);
+        const rendered = md.render(source, env);
+        const html = await sanitize(rendered);
+        const frontmatter = env.frontmatter;
+        const endRenderTime = performance.now();
+        const totalRenderTime = endRenderTime - startRenderTime;
+        console.log(`Markdown HTML render took ${totalRenderTime}ms`);
+        // Now add all scss styles from the document, in order
+        const scopedCss = compile(env.scss, 'css-scope');
+        const css = compile(env.scss);
+        return { html, debug, frontmatter, env, css, scopedCss }
+    } catch(exception) {
+        console.log(exception);
+        return { exception }
     }
-
-    const md = multiuseContainers(containerNames, markdownit({
-            html: defaultValue(options.allowHTML, true),
-            breaks: defaultValue(options.keepBreaks, false),
-            linkify: defaultValue(options.linkify, true),
-            quotes: defaultValue(options.quotes, '“”‘’'),
-        })
-        .use(frontmatterPlugin, {})
-        .use(markdownAttrsPlugin, {})
-        .use(markdownBracketedSpansPlugin, {})
-        .use(markdownMathPlugin, {})
-        .use(markdownDeflistPlugin)
-        .use(markdownFootnotePlugin)
-        .use(markdownImplicitFiguresPlugin, {
-            figcaption: defaultValue(options.figure.figcaption, true),
-            keepAlt: defaultValue(options.figure.keepAlt, true),
-        })
-        .use(markdownTablesPlugin, {
-            multiline: defaultValue(options.table.multiline, true),
-        })
-        .use(markdownSubPlugin)
-        .use(markdownSupPlugin)
-        .use(markdownTaskListsPlugin)
-        .use(markdownMarkPlugin)
-        .use(markdownIncludePlugin, {
-            bracesAreOptional: true,
-            root: defaultValue(options.include.root, rootPath),
-        })
-        .use(markdownCssIncludePlugin, {
-            bracesAreOptional: true,
-            root: defaultValue(options.include.root, rootPath),
-            atRoot: defaultValue(options.include.root, atRootPath),
-        })
-        .use(markdownEmojiPlugin)
-    );
-
-    function injectSourceMap(token) {
-        // Given a token, add attributes to source range of lines
-        // If there is no map, just ignore
-        if (token.map) {
-            token.attrPush(['data-source-line-start', token.map[0] + 1])
-            token.attrPush(['data-source-line-end', token.map.at(-1) + 1])
-        }
-    }
-
-    // Rule to inject source lines into output
-    // This adds attributes to tokens at rule stage
-    // This is needed for fence blocks, which are transformed during rules phase before rendering
-    function injectLineNumbers(originalFunction) {
-        return (tokens, idx, options, env, slf) => {
-            injectSourceMap(tokens[idx]);
-            return originalFunction(tokens, idx, options, env, slf);
-        }
-    }
-    md.renderer.rules.fence = injectLineNumbers(md.renderer.rules.fence);
-
-    // Inject source lines into all _open style tokens.
-    const originalRenderToken = md.renderer.renderToken.bind(md.renderer);
-    md.renderer.renderToken = function (tokens, idx, options) {
-        const token = tokens[idx];
-        if (token.map !== null && token.type.endsWith('_open')) {
-            injectSourceMap(token);
-        }
-        return originalRenderToken(tokens, idx, options);
-    };
-
-    // Math needs extra work to get sourcemap
-    function generateAttrs(attrs) {
-        const attrStrings = attrs.map((attr) => `${attr[0]}="${attr[1]}"`);
-        return attrStrings.join(' ');
-    }
-
-    const originalMathBlockRenderer = md.renderer.rules.math_block;
-    md.renderer.rules.math_block = function(tokens, idx, options, env, slf) {
-        // Inject sourcemap to attrs
-        injectSourceMap(tokens[idx]);
-        // Now manually generate attrs for wrapping div
-        // Call original katex renderer inside
-        const attrString = generateAttrs(tokens[idx].attrs);
-        return `<div class="katex-block" ${attrString}>${originalMathBlockRenderer(tokens, idx, options, env, slf)}</div>`;
-    };
-
-    // Make links open in new tab
-    var defaultRenderLinkOpen = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
-        return self.renderToken(tokens, idx, options);
-    };
-    md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-        tokens[idx].attrSet('target', '_blank');
-        return defaultRenderLinkOpen(tokens, idx, options, env, self);
-    };
-
-    return md;
 }
 
-export const getMarkdown = cacheFunction(initMarkdown);
+async function readAbsoluteUrl(absoluteUrl) {
+    return await fs.readFile(new URL('.' + absoluteUrl, import.meta.url), { encoding: 'utf-8' });
+}
+
+export async function handleRender(event, payload) {
+    const target = payload.target;
+    const source = payload.source;
+    const result = await render(source);
+    if (target === 'html' || target === 'frontmatter') {
+        return result;
+    } else if (target === 'pdf') {
+        const page = await getPage();
+
+        // Register handlers for debugging
+        page.on('console', message => console.log(`[PDF] ${message.type().substring(0, 3).toUpperCase()} ${message.text()}`))
+            .on('pageerror', ({ message }) => console.log(`[PDF] ${message}`))
+            .on('response', response => console.log(`[PDF] ${response.status()} ${response.url().substring(0, MAX_URL_LENGTH)}`))
+            .on('requestfailed', request => console.log(`[PDF] ${request.failure().errorText} ${request.url().substring(0, MAX_URL_LENGTH)}`));
+        await page.setContent(result.html);
+        // Add KaTeX styles to show math properly (includes lots of inlined fonts)
+        await page.addStyleTag({ content: await readAbsoluteUrl(katexUrl) });
+        // Add default styling to turn off katex-mathml which is there just for screen accessibility
+        await page.addStyleTag({ content: defaultCssRaw });
+        // Add paged.js package
+        await page.addScriptTag({ content: pagedjsRaw });
+        // Add local script that defines paginate call
+        await page.addScriptTag({ content: pagerScriptRaw });
+        // Call paginate and get returned pagesize
+        const pagesize = await page.evaluate((cssRaw) => {
+            return paginate(cssRaw);
+        }, defaultCssRaw);
+        return await page.pdf({
+            width: `${pagesize[0]}px`,
+            height: `${pagesize[1]}px`,
+        });
+    }
+    throw `Unknown payload target '${payload.target}`;
+}
