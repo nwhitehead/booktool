@@ -22,8 +22,8 @@ function compile(src, scope?) {
     return sass.compileString(scopedSrc).css;
 }
 
-export async function render(source) {
-    const md = await getMarkdown();
+export async function render(source, options) {
+    const md = await getMarkdown(options);
     let debugEnv = { references: {} };
     let env = { references: {}, frontmatter: {}, scss: [] };
     try {
@@ -52,7 +52,8 @@ async function readAbsoluteUrl(absoluteUrl) {
 export async function handleRender(event, payload) {
     const target = payload.target;
     const source = payload.source;
-    const result = await render(source);
+    const options = payload.options;
+    const result = await render(source, options);
     if (target === 'html' || target === 'frontmatter') {
         return result;
     } else if (target === 'pdf') {

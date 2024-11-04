@@ -1,7 +1,12 @@
+
+import path from 'node:path';
+import fs from 'node:fs';
+import process from 'node:process';
 import commandLineArguments from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
-import process from 'node:process';
+
 import { handleRender } from './render.ts';
+
 
 // Command-line arguments
 const commandLineOptions = [
@@ -61,6 +66,13 @@ function main(options) {
     }
     console.log(options);
     console.log(options.root);
+    for (const filename of options.index) {
+        const filePath = path.resolve(options.root, filename);
+        console.log(`Looking for ${filePath}`);
+        if (fs.existsSync(filePath)) {
+            console.log('Found!');
+        }
+    }
 }
 
 // Main invocation
