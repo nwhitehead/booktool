@@ -16,7 +16,7 @@ import markdownSubPlugin from 'markdown-it-sub';
 import markdownSupPlugin from 'markdown-it-sup';
 import markdownTaskListsPlugin from 'markdown-it-task-lists';
 import markdownMarkPlugin from 'markdown-it-mark';
-import markdownIncludePlugin from 'markdown-it-include';
+import markdownIncludePlugin from './plugins/mdIncludePlugin.ts';
 import { full as markdownEmojiPlugin } from 'markdown-it-emoji';
 import markdownCssIncludePlugin from './plugins/cssIncludePlugin.ts';
 
@@ -75,7 +75,7 @@ export function initMarkdown(options) {
         .use(markdownCssIncludePlugin, {
             bracesAreOptional: true,
             root: defaultValue(options.include.root, rootPath),
-            atRoot: defaultValue(options.include.root, atRootPath),
+            atRoot: defaultValue(options.include.atRoot, atRootPath),
         })
         .use(markdownEmojiPlugin)
     );
