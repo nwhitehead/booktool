@@ -1,3 +1,5 @@
+import defaultCssRaw from './pager/default.css?raw';
+
 
 import path from 'node:path';
 import fs from 'node:fs';
@@ -59,7 +61,7 @@ const sections = [
 
 const usage = commandLineUsage(sections);
 
-function main(options) {
+async function main(options) {
     if (options.help) {
         console.log(usage);
         return;
@@ -71,6 +73,13 @@ function main(options) {
         console.log(`Looking for ${filePath}`);
         if (fs.existsSync(filePath)) {
             console.log('Found!');
+            const src = fs.readFileSync(filePath, { encoding: 'utf-8' });
+            const payload = {
+                target: 'html',
+                source: src,
+                options: { root: options.root, atRoot: options.atRoot },
+            };
+            const result = await handleRender(undefined, payload);
         }
     }
 }
