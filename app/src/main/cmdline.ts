@@ -1,6 +1,5 @@
 import defaultCssRaw from './pager/default.css?raw';
 
-
 import path from 'node:path';
 import fs from 'node:fs';
 import process from 'node:process';

@@ -5,11 +5,13 @@
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
-    "build": "electron-vite build && electron-builder --linux",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "cmdline": "npx tsx ./src/main/cmdline.ts"
+    "about:dev": "echo 'Start full GUI application. Arguments can be passed to application with -- -- prelude.\nExample:\n    npm run dev -- -- -h'",
+    "build": "electron-vite build",
+    "about:buid": "echo 'Build and bundle TS and CSS assets.'",
+    "build-linux": "electron-vite build && electron-builder --linux",
+    "about:build-linux": "echo 'Build Linux snap and AppImage redistributable files.'"
   },
-  "author": "",
+  "author": "Nathan Whitehead",
   "license": "ISC",
   "devDependencies": {
     "electron": "^32.1.2",
