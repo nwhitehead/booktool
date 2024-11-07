@@ -17,6 +17,9 @@ h1 {
 </style>
 
 <template>
+    <MilkdownProvider>
+        <Milkdown />
+    </MilkdownProvider>
     <section class="section">
         <h1>The App</h1>
         <button @click="() => outputChoice = 'html'">HTML</button>
@@ -52,6 +55,8 @@ import { minimalSetup  } from 'codemirror';
 import { bracketMatching } from '@codemirror/language';
 import { markdownLanguage } from '@codemirror/lang-markdown';
 import { consoleLightExtension } from './codemirrorLightTheme.ts';
+import Milkdown from './MilkdownEditor.vue';
+import { MilkdownProvider } from '@milkdown/vue';
 
 const codemirrorExtensions = [
     minimalSetup,

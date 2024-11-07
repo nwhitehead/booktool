@@ -21,6 +21,10 @@
   "dependencies": {
     "@codemirror/lang-markdown": "^6.3.0",
     "@electron-toolkit/utils": "^3.0.0",
+    "@milkdown/core": "^7.5.0",
+    "@milkdown/kit": "^7.5.5",
+    "@milkdown/theme-nord": "^7.5.0",
+    "@milkdown/vue": "^7.5.0",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vscode/markdown-it-katex": "^1.1.0",
     "codemirror": "^6.0.1",
