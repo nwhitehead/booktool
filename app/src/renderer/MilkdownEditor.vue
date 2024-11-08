@@ -4,15 +4,16 @@
 
 <script setup>
 
-import { Editor, rootCtx, defaultValueCtx } from "@milkdown/kit/core";
-import { nord } from "@milkdown/theme-nord";
-import { Milkdown, useEditor } from "@milkdown/vue";
-import { commonmark } from "@milkdown/kit/preset/commonmark";
+import { Editor, rootCtx, defaultValueCtx } from '@milkdown/kit/core';
+import { nord } from '@milkdown/theme-nord';
+import { Milkdown, useEditor } from '@milkdown/vue';
+import { commonmark } from '@milkdown/kit/preset/commonmark';
+import { math } from '@milkdown/plugin-math';
 
 const txt =
 `# Milkdown Vue Commonmark
 
-> You're scared of a world where you're needed.
+> You're scared of a place where you're needed.
 
 This is a demo for using Milkdown with **Vue**.`
 
@@ -23,7 +24,8 @@ useEditor((root) => {
       ctx.set(rootCtx, root)
       ctx.set(defaultValueCtx, txt)
     })
-    .use(commonmark);
+    .use(commonmark)
+    .use(math);
 });
 
 </script>
