@@ -5,7 +5,7 @@
         <!-- <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script> -->
         <style>
             p {
-                hyphens: auto;
+                hyphens: manual;
             }
             @page {
                 size: 150mm 150mm;
@@ -18,7 +18,9 @@
     <body>
         <h1>Margin boxes of a page</h1>
 
-        <p>A page box consists of two types of area: page area and page margin
+        <p>A certain king had a beautiful garden.</p>
+
+        <p>A page box consists of two types of area: page area and page mar&shy;gin
         boxes.</p>
         
         <p>The page area is the content area of a page box. It is the space into
@@ -38,4 +40,16 @@
 
         <p>This is final body text.</p>
     </body>
+    <script src="https://unpkg.com/tex-linebreak2@0.8.4/dist/lib.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hyphen@1.10.6/patterns/en-us.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hyphen@1.10.6/hyphen.min.js"></script>
+<script>
+    const { texLinebreakDOM } = globalThis.texLinebreak;
+    const hyphenate = createHyphenator(hyphenationPatternsEnUs);
+    const elems = document.querySelectorAll('p');
+    for (const elem of elems) {
+        elem.innerHTML = hyphenate(elem.innerHTML);
+    }
+    texLinebreakDOM('p', { justify: true });
+</script>
 </html>
