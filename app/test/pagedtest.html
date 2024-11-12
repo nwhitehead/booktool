@@ -2,10 +2,10 @@
 <html lang="en">
     <head>
         <title>Test of PagedJS</title>
-        <!-- <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script> -->
         <style>
             p {
                 hyphens: manual;
+                text-align: justify;
             }
             @page {
                 size: 150mm 150mm;
@@ -40,16 +40,34 @@
 
         <p>This is final body text.</p>
     </body>
+    <script>
+        globalThis.PagedConfig = {
+            auto: false,
+        };
+    </script>
+    <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
     <script src="https://unpkg.com/tex-linebreak2@0.8.4/dist/lib.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hyphen@1.10.6/patterns/en-us.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hyphen@1.10.6/hyphen.min.js"></script>
 <script>
-    const { texLinebreakDOM } = globalThis.texLinebreak;
-    const hyphenate = createHyphenator(hyphenationPatternsEnUs);
-    const elems = document.querySelectorAll('p');
-    for (const elem of elems) {
-        elem.innerHTML = hyphenate(elem.innerHTML);
+    function addHyphens() {
+        const hyphenate = createHyphenator(hyphenationPatternsEnUs);
+        const elems = document.querySelectorAll('p');
+        for (const elem of elems) {
+            elem.innerHTML = hyphenate(elem.innerHTML);
+        }
     }
-    texLinebreakDOM('p', { justify: true });
+
+    function linebreak() {
+        const { texLinebreakDOM } = globalThis.texLinebreak;
+        texLinebreakDOM('p', { justify: true });
+    }
+
+    function paginate() {
+        globalThis.PagedPolyfill.preview();
+    }
 </script>
+    <button onclick="addHyphens()">Add hyphens</button>
+    <button onclick="linebreak()">TeX linebreak</button>
+    <button onclick="paginate()">Paginate</button>
 </html>
