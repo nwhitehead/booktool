@@ -60,7 +60,7 @@
 
     function linebreak() {
         const { texLinebreakDOM } = globalThis.texLinebreak;
-        texLinebreakDOM('p', { justify: true });
+        texLinebreakDOM('p', { justify: true, updateOnWindowResize: false });
     }
 
     function paginate() {
@@ -76,7 +76,7 @@
             beforePageLayout(page) {
                 console.log('beforePageLayout', page);
                 const { texLinebreakDOM } = globalThis.texLinebreak;
-                texLinebreakDOM('p', { justify: true, stripSoftHyphensFromOutputText: false });
+                texLinebreakDOM('p', { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false });
             }
         }
         Paged.registerHandlers(MyHandler);
