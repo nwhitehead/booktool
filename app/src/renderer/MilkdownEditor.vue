@@ -30,7 +30,7 @@ const iframeNode = $node('iframe', () => ({
     }],
     toDOM: (node: Node) => [
         'iframe',
-        {...node.attrs, 'contenteditable': false},
+        {...node.attrs, 'contenteditable': true},
         0,
     ],
     parseMarkdown: {
@@ -67,15 +67,15 @@ const txt =
 This is a demo for using Milkdown with **Vue**.`
 
 useEditor((root) => {
-  return Editor.make()
-    .config(nord)
-    .config((ctx) => {
-      ctx.set(rootCtx, root)
-      ctx.set(defaultValueCtx, txt)
-    })
-    .use(commonmark)
-    .use(math)
-    .use(iframePlugin);
+    return Editor.make()
+        .config(nord)
+        .config((ctx) => {
+            ctx.set(rootCtx, root)
+            ctx.set(defaultValueCtx, txt)
+        })
+        .use(commonmark)
+        .use(math)
+        .use(iframePlugin)
 });
 
 </script>
