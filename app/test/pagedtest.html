@@ -8,7 +8,7 @@
                 text-align: justify;
             }
             @page {
-                size: 120mm 150mm;
+                size: 120mm 153mm;
                 bleed: 6mm;
                 marks: crop;
             }
@@ -16,39 +16,54 @@
         </style>
     </head>
     <body>
-        <h1>Margin boxes of a page</h1>
+        <!-- <h1>Margin boxes of a page</h1>
 
         <p>A certain king had a beautiful garden.</p>
 
         <p>A page box consists of two types of area: page area and page mar&shy;gin
-        boxes.</p>
-        
-        <p>The page area is the content area of a page box. It is the space into
-        which all your HTML content will flow. When this content runs out of
-        room, another page will be automatically created. It's what the chunker
-        part of Paged.js do.</p>
-        
-        <p>The margins of a page are divided into sixteen boxes where you can
-        put generated content like page number and running heads. These boxes
-        are called margin boxes.</p>
-        
-        <p>Each have its own margin, border, padding, and content areas. By
-        default, their sizes are determined by the margin of the page box.</p>
-        
-        <p>The figure bellow represent the sixteen margin boxes of a page
-        defined by the W3C:</p>
+        boxes.</p> -->
+        <div id="src">
 
-        <p>This is final body text.</p>
+            <p>The page area is the content area of a page box. It is the space into
+            which all your HTML content will flow. When this content.</p>
+            
+            <p>The margins of a page are divided into sixteen boxes where you can
+            put generated content like page number and running heads. These boxes
+            are called margin.</p>
+            
+            <p>Each have its own margin, border, padding, and content areas. By
+            default, their sizes are determined by the margin of the page box.</p>
+
+            <p>Yeah.</p>
+            
+            <p>The figure bellow represent the sixteen margin boxes of a page
+            defined by the W3C:</p>
+
+            <p>This is final body text.</p>
+
+            <p>The margins1 of a page are divided into sixteen boxes where you can
+                put generated content like page number and running heads. These boxes
+                are called margin.</p>
+
+            <p>The margins2 of a page are divided into sixteen boxes where you can
+                put generated content like page number and running heads. These boxes
+                are called margin.</p>
+
+            <p>The margins3 of a page are divided into sixteen boxes where you can
+                put generated content like page number and running heads. These boxes
+                are called margin.</p>
+        
+        </div>
     </body>
     <script>
         globalThis.PagedConfig = {
             auto: false,
         };
     </script>
-    <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
-    <script src="https://unpkg.com/tex-linebreak2@0.8.4/dist/lib.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hyphen@1.10.6/patterns/en-us.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hyphen@1.10.6/hyphen.min.js"></script>
+    <script src="node_modules/pagedjs/dist/paged.polyfill.js"></script>
+    <script src="node_modules/tex-linebreak2/dist/lib.js"></script>
+    <script src="node_modules/hyphen/patterns/en-us.js"></script>
+    <script src="node_modules/hyphen/hyphen.js"></script>
 <script>
     function addHyphens() {
         const hyphenate = createHyphenator(hyphenationPatternsEnUs);
@@ -60,7 +75,7 @@
 
     function linebreak() {
         const { texLinebreakDOM } = globalThis.texLinebreak;
-        texLinebreakDOM('p', { justify: true, updateOnWindowResize: false });
+        texLinebreakDOM('#src', { justify: true, updateOnWindowResize: false });
     }
 
     function paginate() {
@@ -73,11 +88,26 @@
                 super(chunker, polisher, caller);
             }
 
-            beforePageLayout(page) {
-                console.log('beforePageLayout', page);
+            // beforePageLayout(page) {
+            //     const { texLinebreakDOM } = globalThis.texLinebreak;
+            //     console.log(page.width);
+            //     texLinebreakDOM(document.getElementById('src').querySelectorAll('p'), { justify: true, updateOnWindowResize: false });
+
+            //     // const ps = node.querySelectorAll('p');
+            //     // console.log(node.nodeName, node, ps[0]);
+            //     // console.log(page, page.endToken);
+            //     // if (node.nodeName === 'P') {
+            //     //     console.log('layoutNode', node, node.offsetWidth, node.offsetHeight);
+            //     //     texLinebreakDOM([node], { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false });
+            //     // }
+            // }
+            layoutNode(node) {
                 const { texLinebreakDOM } = globalThis.texLinebreak;
-                texLinebreakDOM('p', { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false });
-            }
+                if (node.nodeName === 'P') {
+                    console.log('layoutNode', node);
+                    texLinebreakDOM(node, { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false, lineWidth: 162.44 });
+                }
+        }
         }
         Paged.registerHandlers(MyHandler);
     }

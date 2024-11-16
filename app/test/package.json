@@ -1,0 +1,9 @@
+{
+  "name": "pagedjstest",
+  "author": "Nathan Whitehead",
+  "dependencies": {
+    "hyphen": "^1.10.6",
+    "pagedjs": "^0.4.3",
+    "tex-linebreak2": "^0.8.4"
+  }
+}

@@ -1,0 +1,3 @@
+[submodule "app/test/tex-linebreak2"]
+	path = app/test/tex-linebreak2
+	url = git@github.com:egilll/tex-linebreak2.git

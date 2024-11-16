@@ -54,6 +54,7 @@
     "puppeteer": "^23.6.0",
     "remark-directive": "^3.0.0",
     "sass": "^1.80.4",
+    "tex-linebreak2": "^0.8.4",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vue-codemirror": "^6.1.1"
   }
