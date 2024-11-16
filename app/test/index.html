@@ -54,66 +54,19 @@
                 are called margin.</p>
         
         </div>
+        <div id="out">
+            
+        </div>
     </body>
     <script>
-        globalThis.PagedConfig = {
-            auto: false,
-        };
     </script>
-    <script src="node_modules/pagedjs/dist/paged.polyfill.js"></script>
+    <!-- <script src="node_modules/pagedjs/dist/paged.polyfill.js"></script>
     <script src="node_modules/tex-linebreak2/dist/lib.js"></script>
     <script src="node_modules/hyphen/patterns/en-us.js"></script>
-    <script src="node_modules/hyphen/hyphen.js"></script>
-<script>
-    function addHyphens() {
-        const hyphenate = createHyphenator(hyphenationPatternsEnUs);
-        const elems = document.querySelectorAll('p');
-        for (const elem of elems) {
-            elem.innerHTML = hyphenate(elem.innerHTML);
-        }
-    }
-
-    function linebreak() {
-        const { texLinebreakDOM } = globalThis.texLinebreak;
-        texLinebreakDOM('#src', { justify: true, updateOnWindowResize: false });
-    }
-
-    function paginate() {
-        globalThis.PagedPolyfill.preview();
-    }
-
-    function register() {
-        class MyHandler extends Paged.Handler {
-            constructor(chunker, polisher, caller) {
-                super(chunker, polisher, caller);
-            }
-
-            // beforePageLayout(page) {
-            //     const { texLinebreakDOM } = globalThis.texLinebreak;
-            //     console.log(page.width);
-            //     texLinebreakDOM(document.getElementById('src').querySelectorAll('p'), { justify: true, updateOnWindowResize: false });
-
-            //     // const ps = node.querySelectorAll('p');
-            //     // console.log(node.nodeName, node, ps[0]);
-            //     // console.log(page, page.endToken);
-            //     // if (node.nodeName === 'P') {
-            //     //     console.log('layoutNode', node, node.offsetWidth, node.offsetHeight);
-            //     //     texLinebreakDOM([node], { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false });
-            //     // }
-            // }
-            layoutNode(node) {
-                const { texLinebreakDOM } = globalThis.texLinebreak;
-                if (node.nodeName === 'P') {
-                    console.log('layoutNode', node);
-                    texLinebreakDOM(node, { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false, lineWidth: 162.44 });
-                }
-        }
-        }
-        Paged.registerHandlers(MyHandler);
-    }
-</script>
-    <button onclick="addHyphens()">Add hyphens</button>
+    <script src="node_modules/hyphen/hyphen.js"></script> -->
+    <script type="module" src="main.ts"></script>
+    <button id="buttonAddHyphens">Add hyphens</button>
     <button onclick="linebreak()">TeX linebreak</button>
     <button onclick="register()">Register handler</button>
-    <button onclick="paginate()">Paginate</button>
+    <button id="buttonPaginate">Paginate</button>
 </html>
