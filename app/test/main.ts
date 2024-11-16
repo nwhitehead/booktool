@@ -1,56 +1,35 @@
 
 import { hyphenate } from 'hyphen/en';
 import { texLinebreakDOM } from 'tex-linebreak2';
-import { Previewer } from 'pagedjs';
+import { Previewer, Handler } from 'pagedjs';
 
 let paged = new Previewer();
 
-async function addHyphens() {
-    const elems = document.querySelectorAll('p');
-    for (const elem of elems) {
-        elem.innerHTML = await hyphenate(elem.innerHTML);
-    }
-}
+document.getElementById('buttonRegister').onclick = function() {
 
-function linebreak() {
-    texLinebreakDOM('#src', { justify: true, updateOnWindowResize: false });
-}
-
-function paginate() {
-    globalThis.PagedPolyfill.preview();
-}
-
-function register() {
-    class MyHandler extends Paged.Handler {
+    class MyHandler extends Handler {
         constructor(chunker, polisher, caller) {
             super(chunker, polisher, caller);
         }
 
         // beforePageLayout(page) {
-        //     const { texLinebreakDOM } = globalThis.texLinebreak;
-        //     console.log(page.width);
-        //     texLinebreakDOM(document.getElementById('src').querySelectorAll('p'), { justify: true, updateOnWindowResize: false });
-
-        //     // const ps = node.querySelectorAll('p');
-        //     // console.log(node.nodeName, node, ps[0]);
-        //     // console.log(page, page.endToken);
-        //     // if (node.nodeName === 'P') {
-        //     //     console.log('layoutNode', node, node.offsetWidth, node.offsetHeight);
-        //     //     texLinebreakDOM([node], { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false });
-        //     // }
         // }
         layoutNode(node) {
+            const width = 160;
             if (node.nodeName === 'P') {
                 console.log('layoutNode', node);
-                texLinebreakDOM(node, { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false, lineWidth: 162.44 });
+                texLinebreakDOM(node, { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false, lineWidth: width });
             }
+        }
     }
-    }
-    Paged.registerHandlers(MyHandler);
+    paged.registerHandlers(MyHandler);
 }
 
-document.getElementById('buttonAddHyphens').onclick = function() {
-    addHyphens();
+document.getElementById('buttonAddHyphens').onclick = async function() {
+    const elems = document.querySelectorAll('p');
+    for (const elem of elems) {
+        elem.innerHTML = await hyphenate(elem.innerHTML);
+    }
 }
 
 document.getElementById('buttonPaginate').onclick = function() {
