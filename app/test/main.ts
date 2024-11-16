@@ -12,21 +12,38 @@ document.getElementById('buttonRegister').onclick = function() {
             super(chunker, polisher, caller);
         }
 
-        // beforePageLayout(page) {
-        // }
-        layoutNode(node, layout) {
-            const width = layout.bounds.width;
-            if (node.nodeName === 'P') {
-                console.log('layoutNode', node, layout.bounds.width);
-                texLinebreakDOM(node, {
+        onPageLayout(wrapper, token, layout) {
+            console.log(wrapper, token, layout, layout.bounds.width, token.node);
+            let elems;
+            if (token.node.querySelectorAll) {
+                elems = token.node.querySelectorAll('p');
+                console.log(elems);
+                texLinebreakDOM(elems, {
                     justify: true,
                     stripSoftHyphensFromOutputText: false,
                     updateOnWindowResize: false,
-                    lineWidth: width / 2,
-                    measureFn: (word) => 1,
-                });
+                    lineWidth: 100,
+                });    
             }
-        }
+    }
+        // beforePageLayout(page) {
+        // }
+        // layoutNode(node, layout) {
+        //     const width = layout.bounds.width;
+        //     if (node.nodeName === 'P') {
+        //         console.log('layoutNode', node, layout.bounds.width, layout);
+        //         // const gcs = getComputedStyle(node);
+        //         const gcs = getComputedStyle(layout.element);
+        //         let { width, boxSizing, paddingLeft, paddingRight, textIndent, lineHeight } = getComputedStyle(node);
+        //         // console.log('layoutNode', gcs);
+        //         texLinebreakDOM(node, {
+        //             justify: true,
+        //             stripSoftHyphensFromOutputText: false,
+        //             updateOnWindowResize: false,
+        //             lineWidth: 200,
+        //         });
+        //     }
+        // }
     }
     paged.registerHandlers(MyHandler);
 }
