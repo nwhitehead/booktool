@@ -50,11 +50,9 @@ function register() {
 }
 
 document.getElementById('buttonAddHyphens').onclick = function() {
-    console.log('add hyphens');
     addHyphens();
 }
 
 document.getElementById('buttonPaginate').onclick = function() {
-    //    paged.preview(document.getElementById('src'), undefined, document.getElementById('out'));
     paged.preview();
 }
