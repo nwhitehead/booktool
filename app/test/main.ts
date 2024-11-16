@@ -18,7 +18,13 @@ document.getElementById('buttonRegister').onclick = function() {
             const width = layout.bounds.width;
             if (node.nodeName === 'P') {
                 console.log('layoutNode', node, layout.bounds.width);
-                texLinebreakDOM(node, { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false, lineWidth: width });
+                texLinebreakDOM(node, {
+                    justify: true,
+                    stripSoftHyphensFromOutputText: false,
+                    updateOnWindowResize: false,
+                    lineWidth: width / 2,
+                    measureFn: (word) => 1,
+                });
             }
         }
     }
