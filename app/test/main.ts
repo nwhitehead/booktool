@@ -1,7 +1,7 @@
 
 import { hyphenate } from 'hyphen/en';
 import { texLinebreakDOM } from 'tex-linebreak2';
-import { Previewer, Handler } from 'pagedjs';
+import { Previewer, Handler } from './pagedjs/src/index.js';
 
 let paged = new Previewer();
 
@@ -14,10 +14,10 @@ document.getElementById('buttonRegister').onclick = function() {
 
         // beforePageLayout(page) {
         // }
-        layoutNode(node) {
-            const width = 160;
+        layoutNode(node, layout) {
+            const width = layout.bounds.width;
             if (node.nodeName === 'P') {
-                console.log('layoutNode', node);
+                console.log('layoutNode', node, layout.bounds.width);
                 texLinebreakDOM(node, { justify: true, stripSoftHyphensFromOutputText: false, updateOnWindowResize: false, lineWidth: width });
             }
         }
